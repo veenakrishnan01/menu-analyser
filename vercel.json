@@ -12,15 +12,5 @@
     "src/app/api/crm/add-lead/route.ts": {
       "maxDuration": 10
     }
-  },
-  "env": {
-    "GEMINI_API_KEY": "@gemini_api_key",
-    "GHL_API_KEY": "@ghl_api_key",
-    "GHL_LOCATION_ID": "@ghl_location_id",
-    "GHL_WELCOME_CAMPAIGN_ID": "@ghl_welcome_campaign_id",
-    "STRIPE_PUBLISHABLE_KEY": "@stripe_publishable_key",
-    "STRIPE_SECRET_KEY": "@stripe_secret_key",
-    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
-    "NEXT_PUBLIC_APP_URL": "@next_public_app_url"
   }
 }
