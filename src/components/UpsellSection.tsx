@@ -289,7 +289,7 @@ export function UpsellSection({ userInfo }: UpsellSectionProps) {
 
       {selectedServices.size === 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500 mb-4">Select the services you're interested in to get started</p>
+          <p className="text-gray-500 mb-4">Select the services you&apos;re interested in to get started</p>
         </div>
       )}
     </div>

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import MenuAnalyzer from '@/components/MenuAnalyzer';
 
 export default function Home() {
@@ -13,7 +12,7 @@ export default function Home() {
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             AI-powered restaurant menu analysis to optimize your revenue and average order value. 
-            Get actionable insights to boost your restaurant's profitability.
+            Get actionable insights to boost your restaurant&apos;s profitability.
           </p>
         </div>
         <MenuAnalyzer />

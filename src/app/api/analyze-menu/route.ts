@@ -47,10 +47,10 @@ async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
 
   try {
     // Try pdf-parse first (works on Vercel)
-    const pdfParse = require('pdf-parse');
-    const data = await pdfParse(pdfBuffer);
+    const pdfParse = await import('pdf-parse');
+    const data = await pdfParse.default(pdfBuffer);
     return data.text;
-  } catch (error) {
+  } catch {
     // Fallback: Use Gemini's vision API to extract text from PDF as image
     console.log('Using Gemini for PDF text extraction');
     const base64Pdf = pdfBuffer.toString('base64');

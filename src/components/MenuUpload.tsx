@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { getRemainingAnalyses, updateSession, canAnalyze } from '@/lib/session';
+import { getRemainingAnalyses, updateSession } from '@/lib/session';
 
 interface UserInfo {
   name: string;
@@ -25,7 +25,7 @@ interface MenuUploadProps {
   analysisUsed: number;
 }
 
-export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing, analysisUsed }: MenuUploadProps) {
+export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUploadProps) {
   const [uploadMethod, setUploadMethod] = useState<'pdf' | 'image' | 'url' | null>(null);
   const [url, setUrl] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -132,7 +132,7 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing, analysis
     <div className="bg-white rounded-xl shadow-lg p-8">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Upload Your Menu</h2>
-        <p className="text-gray-600">Choose how you'd like to share your menu for analysis</p>
+        <p className="text-gray-600">Choose how you&apos;d like to share your menu for analysis</p>
         <div className="mt-2 text-sm text-[#F38B08] font-medium">
           {remainingAnalyses} free analyses remaining
         </div>

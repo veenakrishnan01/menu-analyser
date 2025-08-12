@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       try {
         const data = await readFile(filePath, 'utf-8');
         leads = JSON.parse(data);
-      } catch (e) {
+      } catch {
         // File doesn't exist yet
       }
       leads.push({

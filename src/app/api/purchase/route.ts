@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Create line items for Stripe (mock implementation)
-    const lineItems = services.map(serviceId => ({
+    services.map(serviceId => ({
       price_data: {
         currency: 'gbp',
         product_data: {
