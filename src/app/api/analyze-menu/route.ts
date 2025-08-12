@@ -40,43 +40,35 @@ async function extractTextFromImage(imageBuffer: Buffer): Promise<string> {
 }
 
 async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
-  // Convert PDF to base64 and use Gemini to extract text
+  // Use Gemini's vision API to extract text from PDF
   if (!GEMINI_API_KEY) {
     throw new Error('Gemini API key is required');
   }
 
-  try {
-    // Try pdf-parse first (works on Vercel)
-    const pdfParse = await import('pdf-parse');
-    const data = await pdfParse.default(pdfBuffer);
-    return data.text;
-  } catch {
-    // Fallback: Use Gemini's vision API to extract text from PDF as image
-    console.log('Using Gemini for PDF text extraction');
-    const base64Pdf = pdfBuffer.toString('base64');
-    
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  console.log('Using Gemini for PDF text extraction');
+  const base64Pdf = pdfBuffer.toString('base64');
+  
+  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    const prompt = 'Extract all text from this PDF document. Return only the text content, formatted as it appears:';
-    
-    try {
-      const result = await model.generateContent([
-        prompt,
-        {
-          inlineData: {
-            mimeType: 'application/pdf',
-            data: base64Pdf
-          }
+  const prompt = 'Extract all text from this PDF document. Return only the text content, formatted as it appears:';
+  
+  try {
+    const result = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          mimeType: 'application/pdf',
+          data: base64Pdf
         }
-      ]);
-      
-      const response = await result.response;
-      return response.text();
-    } catch (geminiError) {
-      console.error('Gemini PDF processing error:', geminiError);
-      throw new Error('Failed to parse PDF. Please try uploading as an image instead.');
-    }
+      }
+    ]);
+    
+    const response = await result.response;
+    return response.text();
+  } catch (geminiError) {
+    console.error('Gemini PDF processing error:', geminiError);
+    throw new Error('Failed to parse PDF. Please try uploading as an image instead.');
   }
 }
 
