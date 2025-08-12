@@ -171,7 +171,7 @@ export function UpsellSection({ userInfo }: UpsellSectionProps) {
           Take Your Restaurant to the Next Level
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Get deeper insights and actionable strategies to maximize your restaurant's potential
+          Get deeper insights and actionable strategies to maximize your restaurant&apos;s potential
         </p>
       </div>
 

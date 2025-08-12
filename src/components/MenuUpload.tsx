@@ -261,7 +261,7 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
       {remainingAnalyses <= 0 && (
         <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <p className="text-yellow-800 text-center">
-            You've used all your free analyses. Upgrade to get unlimited access plus advanced features!
+            You&apos;ve used all your free analyses. Upgrade to get unlimited access plus advanced features!
           </p>
         </div>
       )}
