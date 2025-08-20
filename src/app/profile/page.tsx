@@ -41,7 +41,7 @@ export default function ProfilePage() {
       await refreshProfile();
       setIsEditing(false);
       alert('Profile updated successfully!');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating profile:', error);
       alert('Failed to update profile. Please try again.');
     } finally {

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import MenuAnalyzerDemo from '@/components/MenuAnalyzerDemo';
 
 export function DemoMode() {
@@ -14,7 +13,7 @@ export function DemoMode() {
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
             <span className="font-medium">Demo Mode</span>
-            <span className="text-sm">- Analysis results won't be saved</span>
+            <span className="text-sm">- Analysis results won&apos;t be saved</span>
           </div>
         </div>
       </div>

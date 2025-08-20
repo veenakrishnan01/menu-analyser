@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { getRemainingAnalyses, updateSession } from '@/lib/session';
 
 interface UserInfo {
   name: string;

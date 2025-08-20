@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { UserProfile } from '@/lib/types/database';
@@ -28,16 +28,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [supabaseError, setSupabaseError] = useState<string | null>(null);
   
-  let supabase: any = null;
+  let supabase: ReturnType<typeof createClient> | null = null;
   
   try {
     supabase = createClient();
-  } catch (error: any) {
-    setSupabaseError(error.message);
+  } catch (error: unknown) {
+    setSupabaseError(error instanceof Error ? error.message : 'Supabase configuration error');
     setLoading(false);
   }
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string) => {
     if (!supabase) return null;
     
     try {
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error fetching profile:', error);
       return null;
     }
-  };
+  }, [supabase]);
 
   const refreshProfile = async () => {
     if (!user) return;
@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     return () => subscription.unsubscribe();
-  }, [supabase]);
+  }, [supabase, fetchProfile]);
 
   const value = {
     user,

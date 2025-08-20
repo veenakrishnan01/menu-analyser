@@ -38,7 +38,7 @@ export function RecentAnalyses() {
     };
 
     fetchRecentAnalyses();
-  }, [user]);
+  }, [user, supabase]);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600 bg-green-50';

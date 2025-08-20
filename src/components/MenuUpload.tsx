@@ -59,7 +59,7 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
     };
 
     fetchRemainingAnalyses();
-  }, [user]);
+  }, [user, supabase]);
 
   const updateAnalysisCount = async () => {
     if (!user) return;

@@ -67,7 +67,7 @@ export function DashboardStats() {
     };
 
     fetchStats();
-  }, [user]);
+  }, [user, supabase]);
 
   const statCards = [
     {

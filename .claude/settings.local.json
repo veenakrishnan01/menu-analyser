@@ -5,7 +5,9 @@
       "Bash(git push:*)",
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(vercel env add:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }

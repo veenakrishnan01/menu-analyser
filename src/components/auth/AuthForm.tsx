@@ -58,8 +58,8 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
         router.push('/dashboard');
         router.refresh();
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -78,8 +78,8 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
       });
 
       if (error) throw error;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred');
       setLoading(false);
     }
   };
