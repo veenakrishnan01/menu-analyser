@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState, useRef } from 'react';
+import { getRemainingAnalyses, updateSession } from '@/lib/session';
 
 interface UserInfo {
   name: string;
@@ -19,114 +18,24 @@ interface AnalysisResult {
   summary: string;
 }
 
-interface MenuUploadProps {
+interface MenuUploadDemoProps {
   userInfo: UserInfo;
-  onAnalysisComplete: (result: AnalysisResult, analysisId?: string) => void;
+  onAnalysisComplete: (result: AnalysisResult) => void;
   onAnalyzing: () => void;
   analysisUsed: number;
 }
 
-export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUploadProps) {
+export function MenuUploadDemo({ userInfo, onAnalysisComplete, onAnalyzing, analysisUsed }: MenuUploadDemoProps) {
   const [url, setUrl] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [remainingAnalyses, setRemainingAnalyses] = useState(10);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const { user } = useAuth();
-  const supabase = createClient();
-
-  useEffect(() => {
-    const fetchRemainingAnalyses = async () => {
-      if (!user) return;
-
-      try {
-        // Get user's session for today
-        const today = new Date().toISOString().split('T')[0];
-        const { data: session } = await supabase
-          .from('user_sessions')
-          .select('analyses_used')
-          .eq('user_id', user.id)
-          .eq('session_date', today)
-          .single();
-
-        const used = session?.analyses_used || 0;
-        setRemainingAnalyses(Math.max(0, 10 - used)); // 10 free analyses per day
-      } catch (error) {
-        console.error('Error fetching remaining analyses:', error);
-        setRemainingAnalyses(10);
-      }
-    };
-
-    fetchRemainingAnalyses();
-  }, [user]);
-
-  const updateAnalysisCount = async () => {
-    if (!user) return;
-
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      
-      // Upsert user session
-      const { error } = await supabase
-        .from('user_sessions')
-        .upsert({
-          user_id: user.id,
-          email: user.email || '',
-          session_date: today,
-          analyses_used: 1,
-          last_analysis_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,session_date',
-          ignoreDuplicates: false
-        });
-
-      if (error) {
-        console.error('Error updating analysis count:', error);
-      }
-    } catch (error) {
-      console.error('Error updating analysis count:', error);
-    }
-  };
-
-  const saveAnalysisToDatabase = async (
-    result: AnalysisResult, 
-    menuSource: 'file' | 'url',
-    menuUrl?: string,
-    fileName?: string
-  ) => {
-    if (!user) return null;
-
-    try {
-      const { data, error } = await supabase
-        .from('menu_analyses')
-        .insert({
-          user_id: user.id,
-          business_name: userInfo.businessName,
-          menu_source: menuSource,
-          menu_url: menuUrl,
-          menu_file_name: fileName,
-          analysis_results: result,
-          revenue_score: result.revenue_score
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error saving analysis:', error);
-        return null;
-      }
-
-      return data.id;
-    } catch (error) {
-      console.error('Error saving analysis:', error);
-      return null;
-    }
-  };
+  const remainingAnalyses = Math.max(0, 10 - analysisUsed);
 
   const handleFileUpload = async (file: File) => {
     if (remainingAnalyses <= 0) {
-      alert('You have used all your free analyses for today. Please try again tomorrow or upgrade your plan.');
+      alert('You have used all your free analyses for this session.');
       return;
     }
 
@@ -150,20 +59,7 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
       }
 
       const result = await response.json();
-      
-      // Save to database
-      const analysisId = await saveAnalysisToDatabase(
-        result,
-        'file',
-        undefined,
-        file.name
-      );
-      
-      // Update analysis count
-      await updateAnalysisCount();
-      setRemainingAnalyses(prev => Math.max(0, prev - 1));
-      
-      onAnalysisComplete(result, analysisId || undefined);
+      onAnalysisComplete(result);
     } catch (error) {
       console.error('Analysis error:', error);
       alert('Failed to analyze menu. Please try again.');
@@ -192,19 +88,7 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
       }
 
       const result = await response.json();
-      
-      // Save to database
-      const analysisId = await saveAnalysisToDatabase(
-        result,
-        'url',
-        url.trim()
-      );
-      
-      // Update analysis count
-      await updateAnalysisCount();
-      setRemainingAnalyses(prev => Math.max(0, prev - 1));
-      
-      onAnalysisComplete(result, analysisId || undefined);
+      onAnalysisComplete(result);
     } catch (error) {
       console.error('Analysis error:', error);
       alert('Failed to analyze menu from URL. Please try again.');
@@ -263,7 +147,7 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
           <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 7a1 1 0 012 0v4a1 1 0 01-2 0V7zm1 7a1 1 0 100-2 1 1 0 000 2z" />
           </svg>
-          {remainingAnalyses} free analyses remaining today
+          {remainingAnalyses} free analyses remaining (demo session)
         </div>
       </div>
 
@@ -358,7 +242,7 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
               <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
-              You&apos;ve used all your free analyses for today. Come back tomorrow for more!
+              You&apos;ve used all your demo analyses. Set up Supabase for unlimited access!
             </p>
           </div>
         )}
