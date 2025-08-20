@@ -152,13 +152,13 @@ export function RecentAnalyses() {
         ))}
       </div>
 
-      {analyses.length >= 10 && (
+      {analyses.length > 0 && (
         <div className="mt-6 text-center">
           <Link
             href="/analyses"
             className="text-[#F38B08] hover:text-[#E67A00] font-medium text-sm"
           >
-            View All Analyses →
+            View All Analyses ({analyses.length}) →
           </Link>
         </div>
       )}

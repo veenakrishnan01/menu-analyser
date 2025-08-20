@@ -17,6 +17,7 @@ export function Navbar() {
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
     { href: '/analyze', label: 'New Analysis', icon: '🔍' },
+    { href: '/analyses', label: 'All Analyses', icon: '📋' },
     { href: '/profile', label: 'Profile', icon: '👤' },
   ];
 
