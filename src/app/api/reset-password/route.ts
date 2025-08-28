@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { createClient } from '@/lib/supabase/server';
 
 // This should match the resetTokens from send-reset-email
 // In production, this would be stored in a database
@@ -53,12 +54,18 @@ export async function POST(request: NextRequest) {
     console.log('Updating password for user:', tokenData.email);
 
     // Update user password
-    const updated = updateUserPassword(tokenData.email, newPassword);
+    const updated = await updateUserPassword(tokenData.email, newPassword);
 
     if (!updated) {
       console.error('Failed to update password for user:', tokenData.email);
+      // Check if we're in production (Vercel)
+      const isProduction = process.env.VERCEL || process.env.VERCEL_ENV;
+      const errorMessage = isProduction 
+        ? 'Password reset is currently not supported in production. Please contact support.'
+        : 'Failed to update password. Please try again.';
+      
       return NextResponse.json(
-        { error: 'Failed to update password. Please try again.' },
+        { error: errorMessage },
         { status: 500 }
       );
     }
@@ -126,24 +133,62 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Helper function
-function updateUserPassword(email: string, newPassword: string): boolean {
+// Helper function - try Supabase first, fallback to file-based storage
+async function updateUserPassword(email: string, newPassword: string): Promise<boolean> {
+  // Try Supabase first
+  try {
+    const supabase = await createClient();
+    
+    const { error } = await supabase
+      .from('users')
+      .update({ password: newPassword })
+      .eq('email', email);
+
+    if (!error) {
+      console.log('Password updated successfully via Supabase for:', email);
+      return true;
+    } else {
+      console.log('Supabase update failed, trying file-based storage:', error.message);
+    }
+  } catch (supabaseError) {
+    console.log('Supabase not available, trying file-based storage:', (supabaseError as Error).message);
+  }
+
+  // Fallback to file-based storage (for development)
+  return updateUserPasswordFile(email, newPassword);
+}
+
+function updateUserPasswordFile(email: string, newPassword: string): boolean {
   try {
     const usersFile = path.join(process.cwd(), 'users.json');
+    console.log('Looking for users file at:', usersFile);
     
     if (!fs.existsSync(usersFile)) {
-      console.error('Users file not found');
+      console.error('Users file not found at:', usersFile);
+      console.log('Current working directory:', process.cwd());
+      console.log('Directory contents:', fs.readdirSync(process.cwd()));
       return false;
     }
 
-    const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+    console.log('Reading users file...');
+    const fileContent = fs.readFileSync(usersFile, 'utf8');
+    console.log('File content length:', fileContent.length);
+    
+    const users = JSON.parse(fileContent);
+    console.log('Number of users found:', users.length);
+    console.log('Looking for user with email:', email);
+    
     const userIndex = users.findIndex((u: Record<string, unknown>) => u.email === email);
+    console.log('User index found:', userIndex);
     
     if (userIndex === -1) {
-      console.error('User not found:', email);
+      console.error('User not found with email:', email);
+      console.log('Available users:', users.map((u: Record<string, unknown>) => u.email));
       return false;
     }
 
+    console.log('Updating password for user:', (users[userIndex] as Record<string, unknown>).name);
+    
     // In production, you should hash the password
     users[userIndex].password = newPassword;
     
@@ -151,12 +196,29 @@ function updateUserPassword(email: string, newPassword: string): boolean {
     users[userIndex].resetToken = null;
     users[userIndex].resetTokenExpiry = null;
     
-    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
-    console.log('Password updated successfully for:', email);
-    return true;
+    console.log('Writing updated users back to file...');
+    
+    // Check if we're in a serverless environment (like Vercel)
+    if (process.env.VERCEL || process.env.VERCEL_ENV) {
+      console.error('Cannot write to filesystem in Vercel serverless environment');
+      console.error('Password update requires a database in production, not file-based storage');
+      console.error('Consider using Supabase, MongoDB, or another database for production');
+      return false;
+    }
+    
+    try {
+      fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+      console.log('Password updated successfully for:', email);
+      return true;
+    } catch (writeError) {
+      console.error('Failed to write users file:', writeError);
+      return false;
+    }
     
   } catch (error) {
     console.error('Error updating password:', error);
+    console.error('Error details:', (error as Error).message);
+    console.error('Error stack:', (error as Error).stack);
     return false;
   }
 }
