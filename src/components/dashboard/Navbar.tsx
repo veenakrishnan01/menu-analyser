@@ -5,12 +5,12 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 
 export function Navbar() {
-  const { user, profile, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleSignOut = async () => {
-    await signOut();
+  const handleSignOut = () => {
+    signOut();
     router.push('/');
   };
 
@@ -55,7 +55,7 @@ export function Navbar() {
           {/* User Menu */}
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-600">
-              Welcome, <span className="font-medium">{profile?.name || user?.email}</span>
+              Welcome, <span className="font-medium">{user?.name || user?.email}</span>
             </div>
             <button
               onClick={handleSignOut}

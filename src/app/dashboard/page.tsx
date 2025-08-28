@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 
 export default function DashboardPage() {
-  const { profile } = useAuth();
+  const { user } = useAuth();
 
   return (
     <ProtectedRoute>
@@ -19,11 +19,11 @@ export default function DashboardPage() {
           {/* Welcome Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">
-              Welcome back, {profile?.name || 'there'}! 👋
+              Welcome back, {user?.name || 'there'}! 👋
             </h1>
             <p className="text-gray-600 mt-2">
-              {profile?.business_name 
-                ? `Here's how ${profile.business_name} is performing` 
+              {user?.businessName 
+                ? `Here's how ${user.businessName} is performing` 
                 : "Here's your menu analysis dashboard"
               }
             </p>

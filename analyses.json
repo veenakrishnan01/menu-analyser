@@ -1,0 +1,98 @@
+[
+  {
+    "id": "1756117050720-iq4mp3dlff",
+    "user_id": "1756117004294",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "The menu has potential for significant revenue growth through strategic pricing, improved visual appeal, and the introduction of combo meals and upselling opportunities.  Currently, pricing is inconsistent and lacks psychological pricing techniques.  The visual presentation could be greatly enhanced to highlight popular and high-margin items.",
+      "quick_wins": [
+        "Implement combo meals pairing popular items (e.g., Mutton Chops + Veechu Parotta,  Chicken Fried Rice + Soda Limes).",
+        "Introduce a 'Chef's Special' section with higher-priced, premium dishes to increase average order value.",
+        "Offer larger sizes of popular shakes and faloodas at a slightly higher price point to encourage higher spending."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of dishes to enhance visual appeal and stimulate customer desire.",
+        "Implement clear visual categorization to improve menu navigation (e.g., distinct sections with headings).",
+        "Use color-coding or font variations to highlight premium or best-selling items."
+      ],
+      "strategic_pricing": [
+        "Employ psychological pricing (e.g., price items at $7.99 instead of $8.00).",
+        "Analyze sales data to identify underperforming items and adjust prices or consider removing them.",
+        "Offer price-point variety in each category (e.g., budget-friendly, mid-range, premium options)."
+      ],
+      "menu_design": [
+        "Organize items by category with clear section headings (Appetizers, Main Courses, Desserts, Beverages).",
+        "Use descriptive language to evoke positive emotions (e.g., 'Succulent Mutton Chops,' 'Creamy Mango Shake').",
+        "Improve readability by using a clear font, appropriate font size, and sufficient white space."
+      ]
+    },
+    "created_at": "2025-08-25T10:17:30.720Z"
+  },
+  {
+    "id": "1756128198307-36ui9e9pd38",
+    "user_id": "1756119326345",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 45,
+    "analysis_results": {
+      "revenue_score": 45,
+      "summary": "The current menu lacks visual appeal, strategic pricing, and upselling opportunities, limiting its revenue potential.  Implementing descriptive menu copy, strategic price points, and combo meals can significantly increase average order value and overall revenue.  Improved visual design will enhance the customer experience and drive impulse purchases.",
+      "quick_wins": [
+        "Introduce combo meals (e.g., Biryani + Naan + Drink)",
+        "Add high-profit margin appetizers (e.g., Samosas, Pakoras)",
+        "Implement a loyalty program or discounts for repeat customers"
+      ],
+      "visual_appeal": [
+        "Use high-quality images of each dish.",
+        "Improve font readability and hierarchy (larger font size for item names, clearer section dividers).",
+        "Use a more visually appealing color scheme and layout."
+      ],
+      "strategic_pricing": [
+        "Implement psychological pricing (e.g., $4.99 instead of $5.00).",
+        "Create price tiers to highlight premium options.",
+        "Offer value-priced options alongside premium choices."
+      ],
+      "menu_design": [
+        "Organize the menu into clear sections (Appetizers, Main Courses, Sides, Beverages).",
+        "Improve descriptions to highlight unique selling points (e.g., use descriptive words like \"tender\", \"aromatic\", \"spicy\").",
+        "Add a section for desserts or other sweet treats to increase average order value."
+      ]
+    },
+    "created_at": "2025-08-25T13:23:18.307Z"
+  },
+  {
+    "id": "1756130325429-guu8daqt4u8",
+    "user_id": "1756119326345",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "The menu has potential for significant revenue growth through strategic pricing adjustments, improved visual appeal, and the introduction of combo meals and upselling opportunities.  Currently, the menu lacks clear visual hierarchy and descriptive language to highlight premium items.  Focusing on these areas will increase average order value and overall revenue.",
+      "quick_wins": [
+        "Introduce combo meals pairing popular shakes with high-margin Mutton or Chicken dishes.",
+        "Implement a tiered pricing strategy for Faloodas, emphasizing the premium ingredients in the higher-priced options.",
+        "Add enticing descriptions to menu items, highlighting unique selling points and quality ingredients."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of the food, particularly for the premium items like Faloodas and Mutton dishes.",
+        "Group items into logical categories with clear headings and subheadings.",
+        "Employ whitespace effectively to improve readability and prevent visual clutter."
+      ],
+      "strategic_pricing": [
+        "Implement price anchoring by placing high-priced items strategically to make other items seem more affordable.",
+        "Offer a limited-time discount or promotion on less popular items to boost sales.",
+        "Analyze sales data to identify optimal price points for maximizing profit margins on each item."
+      ],
+      "menu_design": [
+        "Use a clear and concise font to improve readability.",
+        "Prioritize high-margin items by placing them prominently on the menu (e.g., top of the page or in visually distinct sections).",
+        "Consider a two-column layout to improve readability and make it easier to scan the menu."
+      ]
+    },
+    "created_at": "2025-08-25T13:58:45.430Z"
+  }
+]

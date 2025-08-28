@@ -11,16 +11,25 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.57.0",
     "@google/generative-ai": "^0.24.1",
+    "@react-email/components": "^0.5.1",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.55.0",
+    "@types/nodemailer": "^7.0.1",
     "axios": "^1.11.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
+    "lucide-react": "^0.541.0",
     "next": "15.4.5",
+    "nodemailer": "^7.0.5",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-email": "^4.2.8",
+    "react-hook-form": "^7.62.0",
+    "react-phone-input-2": "^2.15.1",
+    "react-select": "^5.10.2",
+    "resend": "^6.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

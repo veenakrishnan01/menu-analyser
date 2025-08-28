@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { cookies } from 'next/headers';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -168,13 +169,39 @@ async function analyzeMenuWithGemini(menuText: string): Promise<AnalysisResult> 
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get('session')?.value;
+
+    if (!sessionToken) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    // Get user from session
+    global.sessions = global.sessions || {};
+    const user = global.sessions[sessionToken];
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Invalid session' },
+        { status: 401 }
+      );
+    }
+
     const contentType = request.headers.get('content-type');
     let menuText = '';
+    let menuSource: 'file' | 'url' | 'text' = 'text';
+    let menuUrl: string | undefined;
+    let businessName: string | undefined;
 
     if (contentType?.includes('multipart/form-data')) {
       const formData = await request.formData();
       const file = formData.get('file') as File;
       const type = formData.get('type') as string;
+      businessName = formData.get('businessName') as string;
 
       if (!file) {
         return NextResponse.json(
@@ -184,6 +211,7 @@ export async function POST(request: NextRequest) {
       }
 
       const buffer = Buffer.from(await file.arrayBuffer());
+      menuSource = 'file';
 
       if (type === 'pdf') {
         menuText = await extractTextFromPDF(buffer);
@@ -196,12 +224,16 @@ export async function POST(request: NextRequest) {
         );
       }
     } else {
-      const { url, text } = await request.json();
+      const { url, text, businessName: reqBusinessName } = await request.json();
+      businessName = reqBusinessName;
       
       if (url) {
         menuText = await scrapeMenuFromUrl(url);
+        menuSource = 'url';
+        menuUrl = url;
       } else if (text) {
         menuText = text;
+        menuSource = 'text';
       } else {
         return NextResponse.json(
           { error: 'No URL or text provided' },
@@ -220,6 +252,19 @@ export async function POST(request: NextRequest) {
     // Analyze with Gemini AI
     const analysisResult = await analyzeMenuWithGemini(menuText);
 
+    // Save the analysis to user's history
+    try {
+      await saveAnalysisToHistory(user.id, {
+        business_name: businessName,
+        menu_source: menuSource,
+        menu_url: menuUrl,
+        analysis_results: analysisResult
+      });
+    } catch (saveError) {
+      console.error('Error saving analysis:', saveError);
+      // Don't fail the request if saving fails
+    }
+
     return NextResponse.json(analysisResult);
 
   } catch (error) {
@@ -229,5 +274,43 @@ export async function POST(request: NextRequest) {
       { error: errorMessage },
       { status: 500 }
     );
+  }
+}
+
+// Helper function to save analysis to user's history
+async function saveAnalysisToHistory(userId: string, data: {
+  business_name?: string;
+  menu_source: 'file' | 'url' | 'text';
+  menu_url?: string;
+  analysis_results: AnalysisResult;
+}) {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const analysesFile = path.join(process.cwd(), 'analyses.json');
+    
+    const analysis = {
+      id: Date.now().toString() + '-' + Math.random().toString(36).substring(2),
+      user_id: userId,
+      business_name: data.business_name,
+      menu_source: data.menu_source,
+      menu_url: data.menu_url,
+      revenue_score: data.analysis_results.revenue_score,
+      analysis_results: data.analysis_results,
+      created_at: new Date().toISOString()
+    };
+    
+    let allAnalyses = [];
+    
+    if (fs.existsSync(analysesFile)) {
+      allAnalyses = JSON.parse(fs.readFileSync(analysesFile, 'utf8'));
+    }
+    
+    allAnalyses.push(analysis);
+    fs.writeFileSync(analysesFile, JSON.stringify(allAnalyses, null, 2));
+    
+  } catch (error) {
+    console.error('Error saving analysis to history:', error);
+    throw error;
   }
 }

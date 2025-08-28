@@ -1,22 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { Navbar } from '@/components/dashboard/Navbar';
 import { useAuth } from '@/contexts/AuthContext';
-import { createClient } from '@/lib/supabase/client';
 
 export default function ProfilePage() {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: profile?.name || '',
-    businessName: profile?.business_name || '',
-    phone: profile?.phone || '',
+    name: user?.name || '',
+    businessName: user?.businessName || '',
+    phone: user?.phone || '',
   });
 
-  const supabase = createClient();
+  // Update form data when user changes
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        businessName: user.businessName || '',
+        phone: user.phone || '',
+      });
+    }
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,20 +33,12 @@ export default function ProfilePage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          name: formData.name,
-          business_name: formData.businessName || null,
-          phone: formData.phone || null,
-        })
-        .eq('id', user.id);
+      await updateProfile({
+        name: formData.name,
+        businessName: formData.businessName || undefined,
+        phone: formData.phone || undefined,
+      });
 
-      if (error) {
-        throw error;
-      }
-
-      await refreshProfile();
       setIsEditing(false);
       alert('Profile updated successfully!');
     } catch (error: unknown) {
@@ -51,9 +51,9 @@ export default function ProfilePage() {
 
   const handleCancel = () => {
     setFormData({
-      name: profile?.name || '',
-      businessName: profile?.business_name || '',
-      phone: profile?.phone || '',
+      name: user?.name || '',
+      businessName: user?.businessName || '',
+      phone: user?.phone || '',
     });
     setIsEditing(false);
   };
@@ -89,7 +89,7 @@ export default function ProfilePage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                       <div className="bg-gray-50 rounded-lg p-3 text-gray-900">
-                        {profile?.name || 'Not provided'}
+                        {user?.name || 'Not provided'}
                       </div>
                     </div>
 
@@ -103,14 +103,14 @@ export default function ProfilePage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
                       <div className="bg-gray-50 rounded-lg p-3 text-gray-900">
-                        {profile?.business_name || 'Not provided'}
+                        {user?.businessName || 'Not provided'}
                       </div>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                       <div className="bg-gray-50 rounded-lg p-3 text-gray-900">
-                        {profile?.phone || 'Not provided'}
+                        {user?.phone || 'Not provided'}
                       </div>
                     </div>
                   </div>
@@ -222,7 +222,7 @@ export default function ProfilePage() {
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-[#F38B08]">
-                  {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
+                  {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Member Since</div>
               </div>

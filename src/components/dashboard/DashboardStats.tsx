@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface StatsData {
@@ -20,38 +19,39 @@ export function DashboardStats() {
   });
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  const supabase = createClient();
 
   useEffect(() => {
     const fetchStats = async () => {
       if (!user) return;
 
       try {
-        // Fetch all user's analyses
-        const { data: analyses, error } = await supabase
-          .from('menu_analyses')
-          .select('revenue_score, created_at')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
+        const response = await fetch('/api/analyses', {
+          method: 'GET',
+          credentials: 'include',
+        });
 
-        if (error) {
-          console.error('Error fetching stats:', error);
+        if (!response.ok) {
+          console.error('Error fetching analyses for stats:', await response.text());
+          setLoading(false);
           return;
         }
+
+        const data = await response.json();
+        const analyses = data.analyses || [];
 
         const now = new Date();
         const currentMonth = now.getMonth();
         const currentYear = now.getFullYear();
 
-        const totalAnalyses = analyses?.length || 0;
-        const averageScore = analyses?.length 
-          ? Math.round(analyses.reduce((sum, a) => sum + a.revenue_score, 0) / analyses.length)
+        const totalAnalyses = analyses.length;
+        const averageScore = analyses.length 
+          ? Math.round(analyses.reduce((sum: number, a: any) => sum + a.revenue_score, 0) / analyses.length)
           : 0;
-        const lastAnalysisDate = analyses?.[0]?.created_at || null;
-        const analysesThisMonth = analyses?.filter(a => {
+        const lastAnalysisDate = analyses.length > 0 ? analyses[0].created_at : null;
+        const analysesThisMonth = analyses.filter((a: any) => {
           const date = new Date(a.created_at);
           return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-        }).length || 0;
+        }).length;
 
         setStats({
           totalAnalyses,
@@ -67,7 +67,7 @@ export function DashboardStats() {
     };
 
     fetchStats();
-  }, [user, supabase]);
+  }, [user]);
 
   const statCards = [
     {

@@ -1,63 +1,93 @@
 'use client';
 
-import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import '@/styles/phone-input.css';
+import { useForm, Controller } from 'react-hook-form';
 
 interface AuthFormProps {
   mode: 'signin' | 'signup';
   onModeChange: (mode: 'signin' | 'signup') => void;
 }
 
+type SignInFormData = {
+  email: string;
+  password: string;
+};
+
+type SignUpFormData = {
+  email: string;
+  password: string;
+  name: string;
+  businessName?: string;
+  phoneNumber: string;
+};
+
+type FormData = SignInFormData | SignUpFormData;
+
 export function AuthForm({ mode, onModeChange }: AuthFormProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [businessName, setBusinessName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   
-  const supabase = createClient();
+  const { signIn, signUp } = useAuth();
   const router = useRouter();
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+    clearErrors,
+  } = useForm<FormData>({
+    mode: 'onBlur',
+    defaultValues: {
+      email: '',
+      password: '',
+      ...(mode === 'signup' && {
+        name: '',
+        businessName: '',
+        phoneNumber: '',
+      }),
+    },
+  });
+
+  // Clear form and errors when mode changes
+  useEffect(() => {
+    reset();
+    clearErrors();
+    setError(null);
+    setShowPassword(false);
+  }, [mode, reset, clearErrors]);
+
+  const onSubmit = async (data: FormData) => {
     setLoading(true);
     setError(null);
-    setMessage(null);
 
     try {
       if (mode === 'signup') {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              name,
-              business_name: businessName,
-            },
-          },
-        });
-
-        if (error) throw error;
-
-        if (data.user && !data.user.email_confirmed_at) {
-          setMessage('Please check your email for the confirmation link!');
-        } else {
-          router.push('/dashboard');
-        }
+        const signupData = data as SignUpFormData;
+        const formattedPhone = signupData.phoneNumber ? `+${signupData.phoneNumber}` : '';
+        await signUp(
+          signupData.email,
+          signupData.password,
+          signupData.name,
+          signupData.businessName || '',
+          formattedPhone
+        );
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-        
-        router.push('/dashboard');
-        router.refresh();
+        const signinData = data as SignInFormData;
+        await signIn(signinData.email, signinData.password);
       }
+      
+      router.push('/dashboard');
+      router.refresh();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
@@ -65,23 +95,46 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
     }
   };
 
-  const handleGoogleAuth = async () => {
-    setLoading(true);
-    setError(null);
+  const emailValidation = {
+    required: 'Email is required',
+    pattern: {
+      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      message: 'Please enter a valid email address',
+    },
+  };
 
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${location.origin}/dashboard`,
-        },
-      });
+  const passwordValidation = {
+    required: 'Password is required',
+    minLength: {
+      value: 6,
+      message: 'Password must be at least 6 characters',
+    },
+    ...(mode === 'signup' && {
+      validate: {
+        hasUpperCase: (value: string) =>
+          /[A-Z]/.test(value) || 'Password must contain at least one uppercase letter',
+        hasLowerCase: (value: string) =>
+          /[a-z]/.test(value) || 'Password must contain at least one lowercase letter',
+        hasNumber: (value: string) =>
+          /[0-9]/.test(value) || 'Password must contain at least one number',
+      },
+    }),
+  };
 
-      if (error) throw error;
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An error occurred');
-      setLoading(false);
-    }
+  const nameValidation = {
+    required: 'Name is required',
+    minLength: {
+      value: 2,
+      message: 'Name must be at least 2 characters',
+    },
+  };
+
+  const phoneValidation = {
+    required: 'Phone number is required',
+    minLength: {
+      value: 10,
+      message: 'Please enter a valid phone number',
+    },
   };
 
   return (
@@ -105,13 +158,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
           </div>
         )}
 
-        {message && (
-          <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg mb-4">
-            {message}
-          </div>
-        )}
-
-        <form onSubmit={handleAuth} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {mode === 'signup' && (
             <>
               <div>
@@ -120,12 +167,17 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 </label>
                 <input
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F38B08] focus:border-transparent"
+                  {...register('name' as keyof FormData, nameValidation)}
+                  className={`w-full px-4 py-3 border ${
+                    errors.name 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 focus:ring-[#F38B08]'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:border-transparent`}
                   placeholder="Your full name"
                 />
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                )}
               </div>
               
               <div>
@@ -134,11 +186,45 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 </label>
                 <input
                   type="text"
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
+                  {...register('businessName' as keyof FormData)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F38B08] focus:border-transparent"
                   placeholder="Your restaurant name"
                 />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number *
+                </label>
+                <Controller
+                  name={'phoneNumber' as keyof FormData}
+                  control={control}
+                  rules={phoneValidation}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <PhoneInput
+                      country={'us'}
+                      value={value as string}
+                      onChange={onChange}
+                      onBlur={onBlur}
+                      inputProps={{
+                        className: `w-full pl-12 pr-4 py-3 border ${
+                          errors.phoneNumber 
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-300 focus:ring-[#F38B08]'
+                        } rounded-lg focus:outline-none focus:ring-2 focus:border-transparent`,
+                      }}
+                      containerClass="phone-input-container"
+                      buttonClass="phone-input-button"
+                      dropdownClass="phone-input-dropdown"
+                      enableSearch={false}
+                      disableSearchIcon={true}
+                      specialLabel=""
+                    />
+                  )}
+                />
+                {errors.phoneNumber && (
+                  <p className="mt-1 text-sm text-red-600">{errors.phoneNumber.message}</p>
+                )}
               </div>
             </>
           )}
@@ -149,27 +235,59 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
             </label>
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F38B08] focus:border-transparent"
+              {...register('email', emailValidation)}
+              className={`w-full px-4 py-3 border ${
+                errors.email 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300 focus:ring-[#F38B08]'
+              } rounded-lg focus:outline-none focus:ring-2 focus:border-transparent`}
               placeholder="your@email.com"
             />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password *
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F38B08] focus:border-transparent"
-              placeholder="Enter your password"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register('password', passwordValidation)}
+                className={`w-full px-4 py-3 pr-12 border ${
+                  errors.password 
+                    ? 'border-red-500 focus:ring-red-500' 
+                    : 'border-gray-300 focus:ring-[#F38B08]'
+                } rounded-lg focus:outline-none focus:ring-2 focus:border-transparent`}
+                placeholder={mode === 'signup' ? "Min 6 chars, 1 upper, 1 lower, 1 number" : "Enter your password"}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+            )}
+            {mode === 'signin' && (
+              <div className="mt-2 text-right">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-[#F38B08] hover:text-[#E67A00] font-medium"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+            )}
           </div>
 
           <button
@@ -181,47 +299,13 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
           </button>
         </form>
 
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
-          <button
-            onClick={handleGoogleAuth}
-            disabled={loading}
-            className="mt-4 w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors flex items-center justify-center"
-          >
-            <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-              />
-            </svg>
-            Continue with Google
-          </button>
-        </div>
-
         <div className="mt-6 text-center">
           <button
             type="button"
-            onClick={() => onModeChange(mode === 'signin' ? 'signup' : 'signin')}
+            onClick={() => {
+              setError(null);
+              onModeChange(mode === 'signin' ? 'signup' : 'signin');
+            }}
             className="text-[#F38B08] hover:text-[#E67A00] font-medium"
           >
             {mode === 'signin' 

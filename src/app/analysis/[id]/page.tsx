@@ -6,18 +6,33 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { Navbar } from '@/components/dashboard/Navbar';
 import { AnalysisResults } from '@/components/AnalysisResults';
 import { useAuth } from '@/contexts/AuthContext';
-import { createClient } from '@/lib/supabase/client';
-import { MenuAnalysis } from '@/lib/types/database';
+
+interface Analysis {
+  id: string;
+  user_id: string;
+  business_name?: string;
+  menu_source: 'file' | 'url' | 'text';
+  menu_url?: string;
+  revenue_score: number;
+  analysis_results: {
+    revenue_score: number;
+    quick_wins: string[];
+    visual_appeal: string[];
+    strategic_pricing: string[];
+    menu_design: string[];
+    summary: string;
+  };
+  created_at: string;
+}
 
 export default function AnalysisPage() {
   const params = useParams();
   const router = useRouter();
-  const { user, profile } = useAuth();
-  const [analysis, setAnalysis] = useState<MenuAnalysis | null>(null);
+  const { user } = useAuth();
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const supabase = createClient();
   const analysisId = params.id as string;
 
   useEffect(() => {
@@ -25,24 +40,24 @@ export default function AnalysisPage() {
       if (!user || !analysisId) return;
 
       try {
-        const { data, error } = await supabase
-          .from('menu_analyses')
-          .select('*')
-          .eq('id', analysisId)
-          .eq('user_id', user.id) // Ensure user can only access their own analyses
-          .single();
+        const response = await fetch(`/api/analyses/${analysisId}`, {
+          method: 'GET',
+          credentials: 'include',
+        });
 
-        if (error) {
-          if (error.code === 'PGRST116') {
-            setError('Analysis not found or you don\'t have permission to view it.');
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('Analysis not found.');
+          } else if (response.status === 403) {
+            setError('Access denied. You can only view your own analyses.');
           } else {
             setError('Failed to load analysis. Please try again.');
           }
-          console.error('Error fetching analysis:', error);
           return;
         }
 
-        setAnalysis(data);
+        const data = await response.json();
+        setAnalysis(data.analysis);
       } catch (err) {
         console.error('Error:', err);
         setError('Failed to load analysis. Please try again.');
@@ -52,7 +67,7 @@ export default function AnalysisPage() {
     };
 
     fetchAnalysis();
-  }, [user, analysisId, supabase]);
+  }, [user, analysisId]);
 
   const handleNewAnalysis = () => {
     router.push('/analyze');
@@ -150,7 +165,8 @@ export default function AnalysisPage() {
                     })}
                   </span>
                   <span>
-                    {analysis.menu_source === 'url' ? '🔗 URL Analysis' : '📄 File Analysis'}
+                    {analysis.menu_source === 'url' ? '🔗 URL Analysis' : 
+                     analysis.menu_source === 'file' ? '📄 File Analysis' : '📝 Text Analysis'}
                   </span>
                   {analysis.menu_url && (
                     <a 
@@ -177,9 +193,9 @@ export default function AnalysisPage() {
           <AnalysisResults
             result={analysis.analysis_results}
             userInfo={{
-              name: profile?.name || user?.email || '',
+              name: user?.name || '',
               email: user?.email || '',
-              businessName: profile?.business_name || analysis.business_name || undefined
+              businessName: user?.businessName || analysis.business_name || undefined
             }}
             onNewAnalysis={handleNewAnalysis}
             analysisId={analysis.id}

@@ -1,0 +1,31 @@
+[
+  {
+    "id": "1756116448804",
+    "email": "revathykrishna@mailinator.com",
+    "password": "Hello#123",
+    "name": "Revathy",
+    "businessName": "Revathy's"
+  },
+  {
+    "id": "1756117004294",
+    "email": "veenagkrishna01@gmail.com",
+    "password": "Hello#123",
+    "name": "Veena Krishnan",
+    "businessName": "TEst"
+  },
+  {
+    "id": "1756119326345",
+    "email": "ajaisajin@gmail.com",
+    "password": "Hello#123",
+    "name": "Ajai",
+    "businessName": "Aj's"
+  },
+  {
+    "id": "1756195322337",
+    "email": "ajaisajin95@gmail.com",
+    "password": "Alexa321",
+    "name": "Ajai Sajin",
+    "businessName": "Ajai",
+    "phone": "+919688249795"
+  }
+]

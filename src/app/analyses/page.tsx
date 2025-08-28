@@ -4,49 +4,67 @@ import { useEffect, useState } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { Navbar } from '@/components/dashboard/Navbar';
 import { useAuth } from '@/contexts/AuthContext';
-import { createClient } from '@/lib/supabase/client';
-import { MenuAnalysis } from '@/lib/types/database';
 import Link from 'next/link';
+
+interface Analysis {
+  id: string;
+  user_id: string;
+  business_name?: string;
+  menu_source: 'file' | 'url' | 'text';
+  menu_url?: string;
+  revenue_score: number;
+  analysis_results: {
+    revenue_score: number;
+    quick_wins: string[];
+    visual_appeal: string[];
+    strategic_pricing: string[];
+    menu_design: string[];
+    summary: string;
+  };
+  created_at: string;
+}
 
 export default function AnalysesPage() {
   const { user } = useAuth();
-  const [analyses, setAnalyses] = useState<MenuAnalysis[]>([]);
+  const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'this-month' | 'last-week'>('all');
-  
-  const supabase = createClient();
 
   useEffect(() => {
     const fetchAnalyses = async () => {
       if (!user) return;
 
       try {
-        let query = supabase
-          .from('menu_analyses')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
+        const response = await fetch('/api/analyses', {
+          method: 'GET',
+          credentials: 'include',
+        });
 
-        // Apply filters
+        if (!response.ok) {
+          console.error('Error fetching analyses:', await response.text());
+          return;
+        }
+
+        const data = await response.json();
+        let userAnalyses = data.analyses || [];
+
+        // Apply client-side filters
         if (filter === 'this-month') {
           const startOfMonth = new Date();
           startOfMonth.setDate(1);
           startOfMonth.setHours(0, 0, 0, 0);
-          query = query.gte('created_at', startOfMonth.toISOString());
+          userAnalyses = userAnalyses.filter((a: Analysis) => 
+            new Date(a.created_at) >= startOfMonth
+          );
         } else if (filter === 'last-week') {
           const lastWeek = new Date();
           lastWeek.setDate(lastWeek.getDate() - 7);
-          query = query.gte('created_at', lastWeek.toISOString());
+          userAnalyses = userAnalyses.filter((a: Analysis) => 
+            new Date(a.created_at) >= lastWeek
+          );
         }
 
-        const { data, error } = await query;
-
-        if (error) {
-          console.error('Error fetching analyses:', error);
-          return;
-        }
-
-        setAnalyses(data || []);
+        setAnalyses(userAnalyses);
       } catch (error) {
         console.error('Error fetching analyses:', error);
       } finally {
@@ -55,7 +73,7 @@ export default function AnalysesPage() {
     };
 
     fetchAnalyses();
-  }, [user, filter, supabase]);
+  }, [user, filter]);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600 bg-green-50 border-green-200';
@@ -178,7 +196,7 @@ export default function AnalysesPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                           </svg>
                         )}
-                        <span>{analysis.menu_source === 'url' ? 'URL' : 'File'}</span>
+                        <span>{analysis.menu_source === 'url' ? 'URL' : analysis.menu_source === 'file' ? 'File' : 'Text'}</span>
                       </div>
                     </div>
                     <div className={`px-3 py-1 rounded-full text-sm font-medium border ${getScoreColor(analysis.revenue_score)}`}>
