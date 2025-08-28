@@ -5,7 +5,11 @@ import path from 'path';
 import crypto from 'crypto';
 
 // Store for reset tokens (in production, use a database)
-const resetTokens = new Map<string, { email: string; expires: number; userName: string }>();
+// Use global storage to share between endpoints
+const resetTokens = global.resetTokens || new Map<string, { email: string; expires: number; userName: string }>();
+if (!global.resetTokens) {
+  global.resetTokens = resetTokens;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -125,68 +129,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Reset password with token
-export async function PUT(request: NextRequest) {
-  try {
-    const { token, newPassword } = await request.json();
-
-    if (!token || !newPassword) {
-      return NextResponse.json(
-        { error: 'Token and new password are required' },
-        { status: 400 }
-      );
-    }
-
-    if (newPassword.length < 6) {
-      return NextResponse.json(
-        { error: 'Password must be at least 6 characters long' },
-        { status: 400 }
-      );
-    }
-
-    const tokenData = resetTokens.get(token);
-
-    if (!tokenData) {
-      return NextResponse.json(
-        { error: 'Invalid or expired token' },
-        { status: 400 }
-      );
-    }
-
-    if (Date.now() > tokenData.expires) {
-      resetTokens.delete(token);
-      return NextResponse.json(
-        { error: 'Token has expired' },
-        { status: 400 }
-      );
-    }
-
-    // Update user password
-    const updated = updateUserPassword(tokenData.email, newPassword);
-
-    if (!updated) {
-      return NextResponse.json(
-        { error: 'Failed to update password' },
-        { status: 500 }
-      );
-    }
-
-    // Delete used token
-    resetTokens.delete(token);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Password has been reset successfully'
-    });
-
-  } catch (error) {
-    console.error('Error resetting password:', error);
-    return NextResponse.json(
-      { error: 'An error occurred' },
-      { status: 500 }
-    );
-  }
-}
 
 // Helper functions
 function getUserByEmail(email: string) {
@@ -204,23 +146,3 @@ function getUserByEmail(email: string) {
   return null;
 }
 
-function updateUserPassword(email: string, newPassword: string): boolean {
-  try {
-    const usersFile = path.join(process.cwd(), 'users.json');
-    
-    if (fs.existsSync(usersFile)) {
-      const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-      const userIndex = users.findIndex((u: Record<string, unknown>) => u.email === email);
-      
-      if (userIndex !== -1) {
-        users[userIndex].password = newPassword; // In production, hash this
-        fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
-        return true;
-      }
-    }
-  } catch (error) {
-    console.error('Error updating password:', error);
-  }
-  
-  return false;
-}

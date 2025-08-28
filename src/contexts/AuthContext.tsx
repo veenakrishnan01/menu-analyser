@@ -137,8 +137,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const resetPassword = async (token: string, newPassword: string) => {
     // Reset password via API
-    const response = await fetch('/api/send-reset-email', {
-      method: 'PUT',
+    const response = await fetch('/api/reset-password', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
