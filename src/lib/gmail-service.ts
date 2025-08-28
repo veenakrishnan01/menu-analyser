@@ -1,11 +1,24 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Create Gmail transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
+  }
+});
 
-export default resend;
+// Verify connection on startup
+transporter.verify(function(error) {
+  if (error) {
+    console.error('❌ Gmail connection failed:', error);
+    console.log('Please check your GMAIL_USER and GMAIL_APP_PASSWORD environment variables');
+  } else {
+    console.log('✅ Gmail server is ready to send emails');
+  }
+});
 
-// Email sending functions
 export async function sendWelcomeEmail(
   to: string,
   userName: string,
@@ -69,12 +82,7 @@ export async function sendWelcomeEmail(
       </html>
     `;
 
-    const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'Menu Analyzer <onboarding@resend.dev>',
-      to,
-      subject: 'Welcome to Menu Analyzer - Start Optimizing Your Menu Today!',
-      html: htmlContent,
-      text: `Welcome to Menu Analyzer, ${userName}!
+    const textContent = `Welcome to Menu Analyzer, ${userName}!
 
 ${businessName ? `We're excited to help ${businessName} optimize its menu for maximum revenue!` : ''}
 
@@ -93,15 +101,20 @@ Get started:
 Visit your dashboard: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard
 
 Best regards,
-The Menu Analyzer Team`,
-    });
+The Menu Analyzer Team`;
 
-    if (error) {
-      console.error('Error sending welcome email:', error);
-      return { success: false, error };
-    }
+    const mailOptions = {
+      from: `Menu Analyzer <${process.env.GMAIL_USER}>`,
+      to: to,
+      subject: 'Welcome to Menu Analyzer - Start Optimizing Your Menu Today!',
+      text: textContent,
+      html: htmlContent
+    };
 
-    return { success: true, data };
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Welcome email sent successfully:', info.messageId);
+    
+    return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('Error sending welcome email:', error);
     return { success: false, error };
@@ -116,7 +129,6 @@ export async function sendPasswordResetEmail(
   try {
     const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
     
-    // Use simple HTML instead of React component for now
     const htmlContent = `
       <!DOCTYPE html>
       <html>
@@ -147,13 +159,8 @@ export async function sendPasswordResetEmail(
       </body>
       </html>
     `;
-    
-    const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'Menu Analyzer <onboarding@resend.dev>',
-      to,
-      subject: 'Reset Your Menu Analyzer Password',
-      html: htmlContent,
-      text: `Hi ${userName}, 
+
+    const textContent = `Hi ${userName}, 
 
 We received a request to reset your password for Menu Analyzer. 
 
@@ -162,15 +169,20 @@ Click this link to reset: ${resetLink}
 This link expires in 1 hour. If you didn't request this, ignore this email.
 
 Best regards,
-The Menu Analyzer Team`,
-    });
+The Menu Analyzer Team`;
 
-    if (error) {
-      console.error('Error sending password reset email:', error);
-      return { success: false, error };
-    }
+    const mailOptions = {
+      from: `Menu Analyzer <${process.env.GMAIL_USER}>`,
+      to: to,
+      subject: 'Reset Your Menu Analyzer Password',
+      text: textContent,
+      html: htmlContent
+    };
 
-    return { success: true, data };
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Password reset email sent successfully:', info.messageId);
+    
+    return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('Error sending password reset email:', error);
     return { success: false, error };
