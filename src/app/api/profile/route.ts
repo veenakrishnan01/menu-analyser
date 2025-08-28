@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import fs from 'fs';
+import path from 'path';
 
 interface StoredUser {
   id: string;
@@ -12,7 +14,7 @@ interface StoredUser {
 }
 
 // GET - Get current user's profile
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get('session')?.value;
@@ -36,7 +38,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get full user data from storage
-    const fullUser = getUserById(user.id);
+    const fullUser = getUserById(user.id as string);
     
     if (!fullUser) {
       return NextResponse.json(
@@ -46,7 +48,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Return user profile without password
-    const { password, ...profile } = fullUser;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...profile } = fullUser;
 
     return NextResponse.json({
       success: true,
@@ -96,7 +99,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update user profile
-    const updatedUser = updateUserProfile(user.id, {
+    const updatedUser = updateUserProfile(user.id as string, {
       name: name.trim(),
       businessName: businessName?.trim() || undefined,
       phone: phone?.trim() || undefined
@@ -110,7 +113,8 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update session with new user data
-    const { password, ...userWithoutPassword } = updatedUser;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password2, ...userWithoutPassword } = updatedUser;
     global.sessions[sessionToken] = userWithoutPassword;
 
     return NextResponse.json({
@@ -131,8 +135,6 @@ export async function PUT(request: NextRequest) {
 // Helper functions
 function getUserById(userId: string): StoredUser | null {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const usersFile = path.join(process.cwd(), 'users.json');
     
     if (fs.existsSync(usersFile)) {
@@ -152,8 +154,6 @@ function updateUserProfile(userId: string, updates: {
   phone?: string;
 }): StoredUser | null {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const usersFile = path.join(process.cwd(), 'users.json');
     
     if (fs.existsSync(usersFile)) {

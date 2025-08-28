@@ -1,5 +1,5 @@
 declare global {
-  var sessions: Record<string, any>;
+  var sessions: Record<string, Record<string, unknown>>;
 }
 
 export {};

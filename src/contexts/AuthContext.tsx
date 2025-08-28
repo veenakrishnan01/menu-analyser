@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(data.user);
     
     // Migrate old localStorage analyses to new system
-    await migrateOldAnalyses(data.user.id);
+    await migrateOldAnalyses();
   };
 
   const signUp = async (email: string, password: string, name: string, businessName?: string, phone?: string) => {
@@ -210,7 +210,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
 // Migration function to convert old analyses to new system
-async function migrateOldAnalyses(userId: string) {
+async function migrateOldAnalyses() {
   try {
     // Check if we have old analyses in localStorage that need migration
     const oldAnalyses = localStorage.getItem('userAnalyses') || localStorage.getItem('analyses');

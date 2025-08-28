@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import fs from 'fs';
+import path from 'path';
 import { cookies } from 'next/headers';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -254,7 +256,7 @@ export async function POST(request: NextRequest) {
 
     // Save the analysis to user's history
     try {
-      await saveAnalysisToHistory(user.id, {
+      await saveAnalysisToHistory(user.id as string, {
         business_name: businessName,
         menu_source: menuSource,
         menu_url: menuUrl,
@@ -285,8 +287,6 @@ async function saveAnalysisToHistory(userId: string, data: {
   analysis_results: AnalysisResult;
 }) {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const analysesFile = path.join(process.cwd(), 'analyses.json');
     
     const analysis = {

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { sendWelcomeEmail } from '@/lib/email-service';
+import fs from 'fs';
+import path from 'path';
 
 interface StoredUser {
   id: string;
@@ -55,7 +57,8 @@ export async function POST(request: NextRequest) {
     saveUsers(storedUsers);
 
     // Create session
-    const { password: _, ...userWithoutPassword } = newUser;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = newUser;
     const sessionToken = generateSessionToken();
     
     // Set session cookie
@@ -94,15 +97,13 @@ export async function POST(request: NextRequest) {
 // Helper functions
 function getStoredUsers(): StoredUser[] {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const usersFile = path.join(process.cwd(), 'users.json');
     
     if (fs.existsSync(usersFile)) {
       return JSON.parse(fs.readFileSync(usersFile, 'utf8'));
     }
   } catch (error) {
-    console.log('No users file found, creating new one');
+    console.log('No users file found, creating new one', error);
   }
   
   return [];
@@ -110,8 +111,6 @@ function getStoredUsers(): StoredUser[] {
 
 function saveUsers(users: StoredUser[]) {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const usersFile = path.join(process.cwd(), 'users.json');
     
     fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
@@ -124,7 +123,7 @@ function generateSessionToken(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
 
-function storeSession(token: string, user: any) {
+function storeSession(token: string, user: Omit<StoredUser, 'password'>) {
   global.sessions = global.sessions || {};
   global.sessions[token] = user;
 }

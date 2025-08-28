@@ -18,7 +18,7 @@ export default function MenuAnalyzer() {
   const [step, setStep] = useState<'upload' | 'analyzing' | 'results'>('upload');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [analysisId, setAnalysisId] = useState<string | null>(null);
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
 
   const handleAnalysisComplete = (result: AnalysisResult, id?: string) => {
     setAnalysisResult(result);
@@ -37,9 +37,9 @@ export default function MenuAnalyzer() {
       {step === 'upload' && user && (
         <MenuUpload 
           userInfo={{
-            name: profile?.name || user.email || '',
+            name: user.name || user.email || '',
             email: user.email || '',
-            businessName: profile?.business_name || undefined
+            businessName: user.businessName || undefined
           }}
           onAnalysisComplete={handleAnalysisComplete}
           onAnalyzing={() => setStep('analyzing')}
@@ -59,9 +59,9 @@ export default function MenuAnalyzer() {
         <AnalysisResults 
           result={analysisResult} 
           userInfo={{
-            name: profile?.name || user.email || '',
+            name: user.name || user.email || '',
             email: user.email || '',
-            businessName: profile?.business_name || undefined
+            businessName: user.businessName || undefined
           }}
           onNewAnalysis={handleNewAnalysis}
           analysisId={analysisId}

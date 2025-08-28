@@ -28,7 +28,6 @@ type SignUpFormData = {
   phoneNumber: string;
 };
 
-type FormData = SignInFormData | SignUpFormData;
 
 export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
@@ -45,7 +44,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
     formState: { errors },
     reset,
     clearErrors,
-  } = useForm<FormData>({
+  } = useForm<SignUpFormData>({
     mode: 'onBlur',
     defaultValues: {
       email: '',
@@ -66,7 +65,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
     setShowPassword(false);
   }, [mode, reset, clearErrors]);
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: SignUpFormData) => {
     setLoading(true);
     setError(null);
 
@@ -167,7 +166,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 </label>
                 <input
                   type="text"
-                  {...register('name' as keyof FormData, nameValidation)}
+                  {...register('name', nameValidation)}
                   className={`w-full px-4 py-3 border ${
                     errors.name 
                       ? 'border-red-500 focus:ring-red-500' 
@@ -186,7 +185,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 </label>
                 <input
                   type="text"
-                  {...register('businessName' as keyof FormData)}
+                  {...register('businessName')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F38B08] focus:border-transparent"
                   placeholder="Your restaurant name"
                 />
@@ -197,7 +196,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                   Phone Number *
                 </label>
                 <Controller
-                  name={'phoneNumber' as keyof FormData}
+                  name={'phoneNumber'}
                   control={control}
                   rules={phoneValidation}
                   render={({ field: { onChange, onBlur, value } }) => (

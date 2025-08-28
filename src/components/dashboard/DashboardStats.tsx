@@ -3,6 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
+interface Analysis {
+  id: string;
+  revenue_score: number;
+  created_at: string;
+}
+
 interface StatsData {
   totalAnalyses: number;
   averageScore: number;
@@ -45,10 +51,10 @@ export function DashboardStats() {
 
         const totalAnalyses = analyses.length;
         const averageScore = analyses.length 
-          ? Math.round(analyses.reduce((sum: number, a: any) => sum + a.revenue_score, 0) / analyses.length)
+          ? Math.round(analyses.reduce((sum: number, a: Analysis) => sum + a.revenue_score, 0) / analyses.length)
           : 0;
         const lastAnalysisDate = analyses.length > 0 ? analyses[0].created_at : null;
-        const analysesThisMonth = analyses.filter((a: any) => {
+        const analysesThisMonth = analyses.filter((a: Analysis) => {
           const date = new Date(a.created_at);
           return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
         }).length;

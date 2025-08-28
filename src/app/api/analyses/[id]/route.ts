@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import fs from 'fs';
+import path from 'path';
 
 interface Analysis {
   id: string;
@@ -139,8 +141,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 // Helper functions
 function getAnalysisById(id: string): Analysis | null {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const analysesFile = path.join(process.cwd(), 'analyses.json');
     
     if (fs.existsSync(analysesFile)) {
@@ -156,8 +156,6 @@ function getAnalysisById(id: string): Analysis | null {
 
 function deleteAnalysis(id: string) {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const analysesFile = path.join(process.cwd(), 'analyses.json');
     
     if (fs.existsSync(analysesFile)) {

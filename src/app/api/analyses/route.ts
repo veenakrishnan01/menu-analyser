@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import fs from 'fs';
+import path from 'path';
 
 interface Analysis {
   id: string;
@@ -20,7 +22,7 @@ interface Analysis {
 }
 
 // GET - Get all analyses for the current user
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get('session')?.value;
@@ -44,7 +46,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user's analyses
-    const analyses = getUserAnalyses(user.id);
+    const analyses = getUserAnalyses(user.id as string);
 
     return NextResponse.json({
       success: true,
@@ -101,7 +103,7 @@ export async function POST(request: NextRequest) {
     // Create new analysis
     const newAnalysis: Analysis = {
       id: generateAnalysisId(),
-      user_id: user.id,
+      user_id: user.id as string,
       business_name,
       menu_source,
       menu_url,
@@ -134,8 +136,6 @@ function generateAnalysisId(): string {
 
 function getUserAnalyses(userId: string): Analysis[] {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const analysesFile = path.join(process.cwd(), 'analyses.json');
     
     if (fs.existsSync(analysesFile)) {
@@ -153,8 +153,6 @@ function getUserAnalyses(userId: string): Analysis[] {
 
 function saveAnalysis(analysis: Analysis) {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const analysesFile = path.join(process.cwd(), 'analyses.json');
     
     let allAnalyses: Analysis[] = [];

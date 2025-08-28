@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendPasswordResetEmail } from '@/lib/email-service';
+import fs from 'fs';
+import path from 'path';
 import crypto from 'crypto';
 
 // Store for reset tokens (in production, use a database)
@@ -189,13 +191,11 @@ export async function PUT(request: NextRequest) {
 // Helper functions
 function getUserByEmail(email: string) {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const usersFile = path.join(process.cwd(), 'users.json');
     
     if (fs.existsSync(usersFile)) {
       const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-      return users.find((u: any) => u.email === email);
+      return users.find((u: Record<string, unknown>) => u.email === email);
     }
   } catch (error) {
     console.error('Error reading users:', error);
@@ -206,13 +206,11 @@ function getUserByEmail(email: string) {
 
 function updateUserPassword(email: string, newPassword: string): boolean {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const usersFile = path.join(process.cwd(), 'users.json');
     
     if (fs.existsSync(usersFile)) {
       const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-      const userIndex = users.findIndex((u: any) => u.email === email);
+      const userIndex = users.findIndex((u: Record<string, unknown>) => u.email === email);
       
       if (userIndex !== -1) {
         users[userIndex].password = newPassword; // In production, hash this

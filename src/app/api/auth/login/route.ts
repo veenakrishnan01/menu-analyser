@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import fs from 'fs';
+import path from 'path';
 
 interface StoredUser {
   id: string;
@@ -45,7 +47,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create user session (remove password from response)
-    const { password: _, ...userWithoutPassword } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = user;
     
     // In production, you would:
     // 1. Create a JWT token
@@ -92,15 +95,13 @@ function getStoredUsers(): StoredUser[] {
   
   // Server-side storage simulation (in production, use database)
   try {
-    const fs = require('fs');
-    const path = require('path');
     const usersFile = path.join(process.cwd(), 'users.json');
     
     if (fs.existsSync(usersFile)) {
       return JSON.parse(fs.readFileSync(usersFile, 'utf8'));
     }
   } catch (error) {
-    console.log('No users file found, returning empty array');
+    console.log('No users file found, returning empty array', error);
   }
   
   return [];
@@ -110,7 +111,7 @@ function generateSessionToken(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
 
-function storeSession(token: string, user: any) {
+function storeSession(token: string, user: Omit<StoredUser, 'password'>) {
   // In production, store in Redis or database
   // For now, use in-memory storage (will reset on server restart)
   global.sessions = global.sessions || {};
