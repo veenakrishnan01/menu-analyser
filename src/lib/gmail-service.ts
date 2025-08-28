@@ -52,7 +52,7 @@ export async function sendWelcomeEmail(
           </div>
 
           <div style="text-align: center; margin: 32px 0;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard" 
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://menu-analyser.vercel.app'}/dashboard" 
                style="display: inline-block; background-color: #F38B08; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
               Start Your First Analysis
             </a>
@@ -98,7 +98,7 @@ Get started:
 3. Review personalized recommendations
 4. Implement changes and watch your revenue grow!
 
-Visit your dashboard: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard
+Visit your dashboard: ${process.env.NEXT_PUBLIC_APP_URL || 'https://menu-analyser.vercel.app'}/dashboard
 
 Best regards,
 The Menu Analyzer Team`;
@@ -127,7 +127,9 @@ export async function sendPasswordResetEmail(
   resetToken: string
 ) {
   try {
-    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    // Use production URL if available, otherwise fallback to localhost
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://menu-analyser.vercel.app';
+  const resetLink = `${appUrl}/reset-password?token=${resetToken}`;
     
     const htmlContent = `
       <!DOCTYPE html>
