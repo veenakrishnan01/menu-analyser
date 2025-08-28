@@ -127,9 +127,11 @@ export async function sendPasswordResetEmail(
   resetToken: string
 ) {
   try {
-    // Use production URL if available, otherwise fallback to localhost
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://menu-analyser.vercel.app';
-  const resetLink = `${appUrl}/reset-password?token=${resetToken}`;
+    // Use production URL - prioritize environment variable, then detect from headers, fallback to production
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 
+                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '') ||
+                   'https://menu-analyser.vercel.app';
+    const resetLink = `${appUrl}/reset-password?token=${resetToken}`;
     
     const htmlContent = `
       <!DOCTYPE html>
