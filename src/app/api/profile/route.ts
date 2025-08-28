@@ -1,19 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { getUserById, updateUserProfile } from '@/lib/supabase-auth';
 
-interface StoredUser {
-  id: string;
-  email: string;
-  name: string;
-  businessName?: string;
-  phone?: string;
-  password: string;
-  created_at?: string;
-}
+// Interface defined in supabase-auth.ts
 
-// GET - Get current user's profile
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -38,7 +28,7 @@ export async function GET() {
     }
 
     // Get full user data from storage
-    const fullUser = getUserById(user.id as string);
+    const fullUser = await getUserById(user.id as string);
     
     if (!fullUser) {
       return NextResponse.json(
@@ -57,7 +47,7 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    console.error('Error getting profile:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -65,7 +55,6 @@ export async function GET() {
   }
 }
 
-// PUT - Update current user's profile
 export async function PUT(request: NextRequest) {
   try {
     const cookieStore = await cookies();
@@ -91,7 +80,7 @@ export async function PUT(request: NextRequest) {
 
     const { name, businessName, phone } = await request.json();
 
-    if (!name || name.trim().length === 0) {
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
       return NextResponse.json(
         { error: 'Name is required' },
         { status: 400 }
@@ -99,7 +88,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update user profile
-    const updatedUser = updateUserProfile(user.id as string, {
+    const updatedUser = await updateUserProfile(user.id as string, {
       name: name.trim(),
       businessName: businessName?.trim() || undefined,
       phone: phone?.trim() || undefined
@@ -132,55 +121,4 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// Helper functions
-function getUserById(userId: string): StoredUser | null {
-  try {
-    const usersFile = path.join(process.cwd(), 'users.json');
-    
-    if (fs.existsSync(usersFile)) {
-      const users = JSON.parse(fs.readFileSync(usersFile, 'utf8')) as StoredUser[];
-      return users.find(u => u.id === userId) || null;
-    }
-  } catch (error) {
-    console.error('Error reading user:', error);
-  }
-  
-  return null;
-}
-
-function updateUserProfile(userId: string, updates: {
-  name: string;
-  businessName?: string;
-  phone?: string;
-}): StoredUser | null {
-  try {
-    const usersFile = path.join(process.cwd(), 'users.json');
-    
-    if (fs.existsSync(usersFile)) {
-      const users = JSON.parse(fs.readFileSync(usersFile, 'utf8')) as StoredUser[];
-      const userIndex = users.findIndex(u => u.id === userId);
-      
-      if (userIndex === -1) {
-        return null;
-      }
-
-      // Update user data
-      users[userIndex] = {
-        ...users[userIndex],
-        name: updates.name,
-        businessName: updates.businessName,
-        phone: updates.phone
-      };
-
-      // Save back to file
-      fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
-      
-      return users[userIndex];
-    }
-  } catch (error) {
-    console.error('Error updating user:', error);
-    throw error;
-  }
-  
-  return null;
-}
+// Note: User functions now handled by Supabase via imported functions

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { createClient } from '@/lib/supabase/server';
+import { updateUserPassword as updateUserPasswordSupabase } from '@/lib/supabase-auth';
 
 // This should match the resetTokens from send-reset-email
 // In production, this would be stored in a database
@@ -136,24 +136,12 @@ export async function GET(request: NextRequest) {
 // Helper function - try Supabase first, fallback to file-based storage
 async function updateUserPassword(email: string, newPassword: string): Promise<boolean> {
   // Try Supabase first
-  try {
-    const supabase = await createClient();
-    
-    const { error } = await supabase
-      .from('users')
-      .update({ password: newPassword })
-      .eq('email', email);
-
-    if (!error) {
-      console.log('Password updated successfully via Supabase for:', email);
-      return true;
-    } else {
-      console.log('Supabase update failed, trying file-based storage:', error.message);
-    }
-  } catch (supabaseError) {
-    console.log('Supabase not available, trying file-based storage:', (supabaseError as Error).message);
+  const supabaseSuccess = await updateUserPasswordSupabase(email, newPassword);
+  if (supabaseSuccess) {
+    return true;
   }
 
+  console.log('Supabase update failed, trying file-based storage for development');
   // Fallback to file-based storage (for development)
   return updateUserPasswordFile(email, newPassword);
 }

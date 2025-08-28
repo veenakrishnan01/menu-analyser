@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { getUserByEmail } from '@/lib/supabase-auth';
 
 interface StoredUser {
   id: string;
@@ -25,11 +24,8 @@ export async function POST(request: NextRequest) {
     // In a real application, you would query a database here
     // For now, we'll simulate database operations with localStorage-like behavior
     
-    // Get stored users (in production, this would be a database query)
-    const storedUsers = getStoredUsers();
-    
-    // Find user with matching email and password
-    const user = storedUsers.find(u => u.email === email);
+    // Get user from Supabase
+    const user = await getUserByEmail(email);
     
     if (!user) {
       return NextResponse.json(
@@ -85,27 +81,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Helper functions (in production, these would be in separate modules)
-function getStoredUsers(): StoredUser[] {
-  // In a real app, this would be a database query
-  // For now, we'll simulate with a global variable or file system
-  if (typeof window !== 'undefined') {
-    return JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-  }
-  
-  // Server-side storage simulation (in production, use database)
-  try {
-    const usersFile = path.join(process.cwd(), 'users.json');
-    
-    if (fs.existsSync(usersFile)) {
-      return JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-    }
-  } catch (error) {
-    console.log('No users file found, returning empty array', error);
-  }
-  
-  return [];
-}
+// Note: User storage now handled by Supabase
 
 function generateSessionToken(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);

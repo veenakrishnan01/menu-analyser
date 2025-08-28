@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendPasswordResetEmail } from '@/lib/email-service';
-import fs from 'fs';
-import path from 'path';
+import { getUserByEmail } from '@/lib/supabase-auth';
 import crypto from 'crypto';
 
 // Store for reset tokens (in production, use a database)
@@ -25,7 +24,7 @@ export async function POST(request: NextRequest) {
     console.log('Password reset requested for:', email);
 
     // Get user from storage
-    const user = getUserByEmail(email);
+    const user = await getUserByEmail(email);
     
     if (!user) {
       console.log('User not found:', email);
@@ -130,19 +129,5 @@ export async function GET(request: NextRequest) {
 }
 
 
-// Helper functions
-function getUserByEmail(email: string) {
-  try {
-    const usersFile = path.join(process.cwd(), 'users.json');
-    
-    if (fs.existsSync(usersFile)) {
-      const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-      return users.find((u: Record<string, unknown>) => u.email === email);
-    }
-  } catch (error) {
-    console.error('Error reading users:', error);
-  }
-  
-  return null;
-}
+// Note: getUserByEmail is now imported from @/lib/supabase-auth
 
