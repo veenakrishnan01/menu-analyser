@@ -40,17 +40,29 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new user in Supabase
-    const newUser = await createUser({
-      email,
-      password, // In production, hash this with bcrypt
-      name,
-      businessName,
-      phone,
-    });
+    let newUser;
+    try {
+      newUser = await createUser({
+        email,
+        password, // In production, hash this with bcrypt
+        name,
+        businessName,
+        phone,
+      });
 
-    if (!newUser) {
+      if (!newUser) {
+        return NextResponse.json(
+          { error: 'Failed to create user account. Please check your Supabase configuration.' },
+          { status: 500 }
+        );
+      }
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
       return NextResponse.json(
-        { error: 'Failed to create user account' },
+        { 
+          error: 'Database connection failed. Please check your Supabase configuration.',
+          details: process.env.NODE_ENV === 'development' ? String(dbError) : undefined
+        },
         { status: 500 }
       );
     }
