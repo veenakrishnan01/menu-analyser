@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import bcrypt from 'bcrypt';
 import { getUserByEmail } from '@/lib/supabase-auth';
 
 interface StoredUser {
@@ -34,8 +35,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify password (in production, use bcrypt)
-    if (user.password !== password) {
+    // Verify password using bcrypt
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }

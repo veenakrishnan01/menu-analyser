@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import bcrypt from 'bcrypt';
 import { sendWelcomeEmail } from '@/lib/email-service';
 import { createUser, userExists } from '@/lib/supabase-auth';
 
@@ -39,12 +40,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Hash the password before storing
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     // Create new user in Supabase
     let newUser;
     try {
       newUser = await createUser({
         email,
-        password, // In production, hash this with bcrypt
+        password: hashedPassword,
         name,
         businessName,
         phone,
