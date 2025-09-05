@@ -73,7 +73,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
       if (mode === 'signup') {
         const signupData = data as SignUpFormData;
         const formattedPhone = signupData.phoneNumber ? `+${signupData.phoneNumber}` : '';
-        const result = await signUp(
+        await signUp(
           signupData.email,
           signupData.password,
           signupData.name,
