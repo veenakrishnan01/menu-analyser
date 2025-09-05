@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import { sendEmailVerificationEmail } from '@/lib/email-service';
-import { createUser, userExists, generateVerificationToken } from '@/lib/supabase-auth';
+import jwt from 'jsonwebtoken';
+import { createUser, userExists } from '@/lib/supabase-auth';
 
 
 export async function POST(request: NextRequest) {
@@ -63,28 +63,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate verification token
-    const verificationToken = await generateVerificationToken(email);
-    
-    if (!verificationToken) {
-      return NextResponse.json(
-        { error: 'Failed to generate verification token. Please try again.' },
-        { status: 500 }
-      );
-    }
+    // Create JWT session
+    const payload = {
+      userId: newUser.id,
+      email: newUser.email,
+      name: newUser.name,
+    };
 
-    // Send verification email (don't wait for it to complete)
-    sendEmailVerificationEmail(email, name, verificationToken).catch(error => {
-      console.error('Failed to send verification email:', error);
-      // Don't throw error - user account is already created
+    const token = jwt.sign(payload, process.env.JWT_SECRET!, {
+      expiresIn: '7d',
     });
 
-    return NextResponse.json({
+    // Create the response with the token as an HTTP-only cookie
+    const response = NextResponse.json({
       success: true,
-      message: 'Account created successfully! Please check your email to verify your account before logging in.',
-      redirectTo: '/verify-email',
-      email: email
+      message: 'Account created successfully!',
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        name: newUser.name,
+        businessName: newUser.businessName,
+        phone: newUser.phone,
+      },
     });
+
+    response.cookies.set('auth-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
+    });
+
+    return response;
 
   } catch (error) {
     console.error('Signup error:', error);

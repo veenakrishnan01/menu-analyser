@@ -100,7 +100,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error(data.error || 'Signup failed');
     }
 
-    // Don't set user for unverified accounts - they need to verify email first
+    // Set user after successful signup
+    setUser(data.user);
+    
+    // Migrate old localStorage analyses to new system
+    await migrateOldAnalyses();
+    
     return data;
   };
 

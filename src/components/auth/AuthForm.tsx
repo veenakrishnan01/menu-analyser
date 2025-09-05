@@ -81,8 +81,8 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
           formattedPhone
         );
         
-        // For signup, redirect to verify-email page
-        router.push('/verify-email');
+        // For signup, redirect to dashboard
+        router.push('/dashboard');
         router.refresh();
       } else {
         const signinData = data as SignInFormData;
