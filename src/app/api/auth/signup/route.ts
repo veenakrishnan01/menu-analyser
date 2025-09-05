@@ -3,14 +3,6 @@ import bcrypt from 'bcrypt';
 import { sendEmailVerificationEmail } from '@/lib/email-service';
 import { createUser, userExists, generateVerificationToken } from '@/lib/supabase-auth';
 
-interface StoredUser {
-  id: string;
-  email: string;
-  name: string;
-  businessName?: string;
-  phone?: string;
-  password: string;
-}
 
 export async function POST(request: NextRequest) {
   try {

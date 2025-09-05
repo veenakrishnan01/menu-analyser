@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -12,15 +12,12 @@ export default function VerifyEmailPage() {
   const token = searchParams.get('token');
 
   useEffect(() => {
-    const handleVerification = async () => {
-      if (token) {
-        await verifyEmail(token);
-      }
-    };
-    handleVerification();
-  }, [token]);
+    if (token) {
+      verifyEmail(token);
+    }
+  }, [token, verifyEmail]);
 
-  const verifyEmail = async (verificationToken: string) => {
+  const verifyEmail = useCallback(async (verificationToken: string) => {
     setStatus('loading');
     try {
       const response = await fetch('/api/auth/verify-email', {
@@ -49,7 +46,7 @@ export default function VerifyEmailPage() {
       setStatus('error');
       setMessage('An error occurred during verification');
     }
-  };
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center px-4">
@@ -62,7 +59,7 @@ export default function VerifyEmailPage() {
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">Check Your Email</h2>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                 <p className="text-blue-800">
-                  We've sent a verification link to your email address. Please check your email and click the verification link to activate your account.
+                  We&apos;ve sent a verification link to your email address. Please check your email and click the verification link to activate your account.
                 </p>
               </div>
               <div className="text-gray-600 text-sm mb-6">
