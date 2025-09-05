@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import bcrypt from 'bcrypt';
 import { sendEmailVerificationEmail } from '@/lib/email-service';
 import { createUser, userExists, generateVerificationToken } from '@/lib/supabase-auth';
@@ -102,15 +101,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-// Helper functions
-
-function generateSessionToken(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
-}
-
-function storeSession(token: string, user: Omit<StoredUser, 'password'>) {
-  global.sessions = global.sessions || {};
-  global.sessions[token] = user;
 }

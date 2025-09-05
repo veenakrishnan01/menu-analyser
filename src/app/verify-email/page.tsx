@@ -12,9 +12,12 @@ export default function VerifyEmailPage() {
   const token = searchParams.get('token');
 
   useEffect(() => {
-    if (token) {
-      verifyEmail(token);
-    }
+    const handleVerification = async () => {
+      if (token) {
+        await verifyEmail(token);
+      }
+    };
+    handleVerification();
   }, [token]);
 
   const verifyEmail = async (verificationToken: string) => {
@@ -63,7 +66,7 @@ export default function VerifyEmailPage() {
                 </p>
               </div>
               <div className="text-gray-600 text-sm mb-6">
-                <p>Didn't receive the email? Check your spam folder or contact support.</p>
+                <p>Didn&apos;t receive the email? Check your spam folder or contact support.</p>
               </div>
             </div>
           )}
