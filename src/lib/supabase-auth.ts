@@ -252,13 +252,11 @@ export async function verifyEmailToken(token: string): Promise<boolean> {
       .single();
 
     if (error || !data) {
-      console.log('Invalid verification token:', token);
       return false;
     }
 
     // Check if token is expired
     if (new Date() > new Date(data.verification_token_expires)) {
-      console.log('Verification token expired for:', data.email);
       return false;
     }
 
@@ -277,7 +275,6 @@ export async function verifyEmailToken(token: string): Promise<boolean> {
       return false;
     }
 
-    console.log('Email verified successfully for:', data.email);
     return true;
   } catch (error) {
     console.error('Error verifying email token:', error);
