@@ -137,49 +137,64 @@ export async function sendEmailVerificationEmail(
       <html>
       <head>
         <meta charset="utf-8">
-        <title>Verify Your Email Address</title>
+        <title>Please confirm your email address</title>
       </head>
-      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h1 style="color: #F38B08;">🍽️ Menu Analyzer</h1>
-          <h2>Verify Your Email Address</h2>
-          <p>Hi ${userName},</p>
-          <p>Thank you for signing up for Menu Analyzer! To complete your registration, please verify your email address by clicking the button below:</p>
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${verificationLink}" 
-               style="display: inline-block; background-color: #F38B08; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
-              Verify Email Address
-            </a>
-          </div>
-          <p>Or copy and paste this link: ${verificationLink}</p>
-          <div style="background-color: #FFF7ED; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0; color: #92400E;"><strong>⚠️ This link expires in 24 hours.</strong></p>
-          </div>
-          <p>If you didn't create an account with us, please ignore this email.</p>
-          <hr style="margin: 30px 0;">
-          <p style="color: #666; font-size: 14px;">Best regards,<br>The Menu Analyzer Team</p>
-        </div>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+        <table role="presentation" cellpadding="0" cellspacing="0" style="width: 100%; margin: 0; padding: 20px; background-color: #f6f9fc;">
+          <tr>
+            <td align="center">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+                <tr>
+                  <td style="padding: 40px 30px; text-align: center;">
+                    <h1 style="color: #333; font-size: 24px; margin: 0 0 20px 0; font-weight: 600;">Menu Analyzer</h1>
+                    <h2 style="color: #555; font-size: 20px; margin: 0 0 20px 0; font-weight: 500;">Confirm your email address</h2>
+                    <p style="font-size: 16px; margin: 0 0 20px 0; color: #666;">Hello ${userName},</p>
+                    <p style="font-size: 16px; margin: 0 0 30px 0; color: #666;">Please confirm your email address to complete your account setup.</p>
+                    <div style="margin: 30px 0;">
+                      <a href="${verificationLink}" style="display: inline-block; background-color: #007bff; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 16px;">Confirm Email</a>
+                    </div>
+                    <p style="font-size: 14px; color: #999; margin: 20px 0;">This link will expire in 24 hours for security.</p>
+                    <p style="font-size: 14px; color: #999; margin: 0;">If you didn't request this, please ignore this email.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 20px 30px; background-color: #f8f9fa; border-top: 1px solid #e9ecef; text-align: center; border-radius: 0 0 8px 8px;">
+                    <p style="font-size: 12px; color: #6c757d; margin: 0;">Menu Analyzer Team</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
       </body>
       </html>
     `;
 
-    const textContent = `Hi ${userName}, 
+    const textContent = `Menu Analyzer - Confirm your email address
 
-Thank you for signing up for Menu Analyzer! 
+Hello ${userName},
 
-Click this link to verify your email address: ${verificationLink}
+Please confirm your email address to complete your account setup.
 
-This link expires in 24 hours. If you didn't create an account with us, ignore this email.
+Click here to confirm: ${verificationLink}
 
-Best regards,
-The Menu Analyzer Team`;
+This link will expire in 24 hours for security.
+
+If you didn't request this, please ignore this email.
+
+Menu Analyzer Team`;
 
     const mailOptions = {
-      from: `Menu Analyzer <${process.env.GMAIL_USER}>`,
+      from: `"Menu Analyzer" <${process.env.GMAIL_USER}>`,
       to: to,
-      subject: 'Verify Your Menu Analyzer Account',
+      subject: 'Please confirm your email address',
       text: textContent,
-      html: htmlContent
+      html: htmlContent,
+      headers: {
+        'X-Priority': '3',
+        'X-MSMail-Priority': 'Normal',
+        'Importance': 'Normal'
+      }
     };
 
     const info = await transporter.sendMail(mailOptions);
