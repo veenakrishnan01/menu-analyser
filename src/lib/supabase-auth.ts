@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import bcrypt from 'bcrypt';
 
 export interface User {
   id: string;
@@ -121,11 +122,15 @@ export async function createUser(userData: {
 // Update user password
 export async function updateUserPassword(email: string, newPassword: string): Promise<boolean> {
   try {
+    // Hash the new password before storing
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    
     const supabase = await createClient();
     
     const { error } = await supabase
       .from('users')
-      .update({ password: newPassword }) // In production, hash this
+      .update({ password: hashedPassword })
       .eq('email', email);
 
     if (error) {
