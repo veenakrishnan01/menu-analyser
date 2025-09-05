@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcrypt';
-import { sendWelcomeEmail } from '@/lib/email-service';
-import { createUser, userExists } from '@/lib/supabase-auth';
+import { sendEmailVerificationEmail } from '@/lib/email-service';
+import { createUser, userExists, generateVerificationToken } from '@/lib/supabase-auth';
 
 interface StoredUser {
   id: string;
@@ -72,33 +72,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create session
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _password, ...userWithoutPassword } = newUser;
-    const sessionToken = generateSessionToken();
+    // Generate verification token
+    const verificationToken = await generateVerificationToken(email);
     
-    // Set session cookie
-    const cookieStore = await cookies();
-    cookieStore.set('session', sessionToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
+    if (!verificationToken) {
+      return NextResponse.json(
+        { error: 'Failed to generate verification token. Please try again.' },
+        { status: 500 }
+      );
+    }
 
-    // Store session
-    storeSession(sessionToken, userWithoutPassword);
-
-    // Send welcome email (don't wait for it to complete)
-    sendWelcomeEmail(email, name, businessName).catch(error => {
-      console.error('Failed to send welcome email:', error);
+    // Send verification email (don't wait for it to complete)
+    sendEmailVerificationEmail(email, name, verificationToken).catch(error => {
+      console.error('Failed to send verification email:', error);
       // Don't throw error - user account is already created
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Account created successfully',
-      user: userWithoutPassword
+      message: 'Account created successfully! Please check your email to verify your account before logging in.',
+      redirectTo: '/verify-email',
+      email: email
     });
 
   } catch (error) {

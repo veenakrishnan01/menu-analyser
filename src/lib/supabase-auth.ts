@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 export interface User {
   id: string;
@@ -8,6 +9,9 @@ export interface User {
   businessName?: string;
   phone?: string;
   created_at?: string;
+  email_verified?: boolean;
+  verification_token?: string;
+  verification_token_expires?: string;
 }
 
 export interface StoredUser extends User {
@@ -37,7 +41,10 @@ export async function getUserByEmail(email: string): Promise<StoredUser | null> 
       name: data.name,
       businessName: data.business_name,
       phone: data.phone,
-      created_at: data.created_at
+      created_at: data.created_at,
+      email_verified: data.email_verified,
+      verification_token: data.verification_token,
+      verification_token_expires: data.verification_token_expires
     };
   } catch (error) {
     console.error('Error getting user by email:', error);
@@ -68,7 +75,10 @@ export async function getUserById(id: string): Promise<StoredUser | null> {
       name: data.name,
       businessName: data.business_name,
       phone: data.phone,
-      created_at: data.created_at
+      created_at: data.created_at,
+      email_verified: data.email_verified,
+      verification_token: data.verification_token,
+      verification_token_expires: data.verification_token_expires
     };
   } catch (error) {
     console.error('Error getting user by ID:', error);
@@ -111,7 +121,10 @@ export async function createUser(userData: {
       name: data.name,
       businessName: data.business_name,
       phone: data.phone,
-      created_at: data.created_at
+      created_at: data.created_at,
+      email_verified: data.email_verified,
+      verification_token: data.verification_token,
+      verification_token_expires: data.verification_token_expires
     };
   } catch (error) {
     console.error('Error creating user:', error);
@@ -177,7 +190,10 @@ export async function updateUserProfile(
       name: data.name,
       businessName: data.business_name,
       phone: data.phone,
-      created_at: data.created_at
+      created_at: data.created_at,
+      email_verified: data.email_verified,
+      verification_token: data.verification_token,
+      verification_token_expires: data.verification_token_expires
     };
   } catch (error) {
     console.error('Error updating profile:', error);
@@ -192,6 +208,79 @@ export async function userExists(email: string): Promise<boolean> {
     return user !== null;
   } catch (error) {
     console.error('Error checking if user exists:', error);
+    return false;
+  }
+}
+
+// Generate verification token and update user
+export async function generateVerificationToken(email: string): Promise<string | null> {
+  try {
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+    
+    const supabase = await createClient();
+    
+    const { error } = await supabase
+      .from('users')
+      .update({ 
+        verification_token: token,
+        verification_token_expires: expires.toISOString()
+      })
+      .eq('email', email);
+
+    if (error) {
+      console.error('Error generating verification token:', error);
+      return null;
+    }
+
+    return token;
+  } catch (error) {
+    console.error('Error generating verification token:', error);
+    return null;
+  }
+}
+
+// Verify email token
+export async function verifyEmailToken(token: string): Promise<boolean> {
+  try {
+    const supabase = await createClient();
+    
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('verification_token', token)
+      .single();
+
+    if (error || !data) {
+      console.log('Invalid verification token:', token);
+      return false;
+    }
+
+    // Check if token is expired
+    if (new Date() > new Date(data.verification_token_expires)) {
+      console.log('Verification token expired for:', data.email);
+      return false;
+    }
+
+    // Mark email as verified and clear token
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ 
+        email_verified: true,
+        verification_token: null,
+        verification_token_expires: null
+      })
+      .eq('verification_token', token);
+
+    if (updateError) {
+      console.error('Error verifying email:', updateError);
+      return false;
+    }
+
+    console.log('Email verified successfully for:', data.email);
+    return true;
+  } catch (error) {
+    console.error('Error verifying email token:', error);
     return false;
   }
 }

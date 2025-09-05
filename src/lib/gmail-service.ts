@@ -121,6 +121,77 @@ The Menu Analyzer Team`;
   }
 }
 
+export async function sendEmailVerificationEmail(
+  to: string,
+  userName: string,
+  verificationToken: string
+) {
+  try {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 
+                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '') ||
+                   'https://menu-analyser.vercel.app';
+    const verificationLink = `${appUrl}/verify-email?token=${verificationToken}`;
+    
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Verify Your Email Address</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h1 style="color: #F38B08;">🍽️ Menu Analyzer</h1>
+          <h2>Verify Your Email Address</h2>
+          <p>Hi ${userName},</p>
+          <p>Thank you for signing up for Menu Analyzer! To complete your registration, please verify your email address by clicking the button below:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${verificationLink}" 
+               style="display: inline-block; background-color: #F38B08; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+              Verify Email Address
+            </a>
+          </div>
+          <p>Or copy and paste this link: ${verificationLink}</p>
+          <div style="background-color: #FFF7ED; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0; color: #92400E;"><strong>⚠️ This link expires in 24 hours.</strong></p>
+          </div>
+          <p>If you didn't create an account with us, please ignore this email.</p>
+          <hr style="margin: 30px 0;">
+          <p style="color: #666; font-size: 14px;">Best regards,<br>The Menu Analyzer Team</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const textContent = `Hi ${userName}, 
+
+Thank you for signing up for Menu Analyzer! 
+
+Click this link to verify your email address: ${verificationLink}
+
+This link expires in 24 hours. If you didn't create an account with us, ignore this email.
+
+Best regards,
+The Menu Analyzer Team`;
+
+    const mailOptions = {
+      from: `Menu Analyzer <${process.env.GMAIL_USER}>`,
+      to: to,
+      subject: 'Verify Your Menu Analyzer Account',
+      text: textContent,
+      html: htmlContent
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email verification sent successfully:', info.messageId);
+    
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Error sending verification email:', error);
+    return { success: false, error };
+  }
+}
+
 export async function sendPasswordResetEmail(
   to: string,
   userName: string,
