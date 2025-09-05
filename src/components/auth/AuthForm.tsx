@@ -73,20 +73,25 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
       if (mode === 'signup') {
         const signupData = data as SignUpFormData;
         const formattedPhone = signupData.phoneNumber ? `+${signupData.phoneNumber}` : '';
-        await signUp(
+        const result = await signUp(
           signupData.email,
           signupData.password,
           signupData.name,
           signupData.businessName || '',
           formattedPhone
         );
+        
+        // For signup, redirect to verify-email page
+        router.push('/verify-email');
+        router.refresh();
       } else {
         const signinData = data as SignInFormData;
         await signIn(signinData.email, signinData.password);
+        
+        // For signin, redirect to dashboard
+        router.push('/dashboard');
+        router.refresh();
       }
-      
-      router.push('/dashboard');
-      router.refresh();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {

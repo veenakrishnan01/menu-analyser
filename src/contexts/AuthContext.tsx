@@ -100,7 +100,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error(data.error || 'Signup failed');
     }
 
-    setUser(data.user);
+    // Don't set user for unverified accounts - they need to verify email first
+    return data;
   };
 
   const signOut = async () => {
