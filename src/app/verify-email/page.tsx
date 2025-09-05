@@ -11,12 +11,6 @@ export default function VerifyEmailPage() {
   const router = useRouter();
   const token = searchParams.get('token');
 
-  useEffect(() => {
-    if (token) {
-      verifyEmail(token);
-    }
-  }, [token, verifyEmail]);
-
   const verifyEmail = useCallback(async (verificationToken: string) => {
     setStatus('loading');
     try {
@@ -47,6 +41,12 @@ export default function VerifyEmailPage() {
       setMessage('An error occurred during verification');
     }
   }, [router]);
+
+  useEffect(() => {
+    if (token) {
+      verifyEmail(token);
+    }
+  }, [token, verifyEmail]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center px-4">
