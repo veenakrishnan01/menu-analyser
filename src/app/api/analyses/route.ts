@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/jwt';
 import fs from 'fs';
 import path from 'path';
 
@@ -25,28 +26,28 @@ interface Analysis {
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get('session')?.value;
+    const token = cookieStore.get('token')?.value;
 
-    if (!sessionToken) {
+    if (!token) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
 
-    // Get user from session
-    global.sessions = global.sessions || {};
-    const user = global.sessions[sessionToken];
-
-    if (!user) {
+    let userId: string;
+    try {
+      const payload = verifyToken(token);
+      userId = payload.userId;
+    } catch (tokenError) {
       return NextResponse.json(
-        { error: 'Invalid session' },
+        { error: 'Invalid or expired session' },
         { status: 401 }
       );
     }
 
     // Get user's analyses
-    const analyses = getUserAnalyses(user.id as string);
+    const analyses = getUserAnalyses(userId);
 
     return NextResponse.json({
       success: true,
@@ -66,22 +67,22 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get('session')?.value;
+    const token = cookieStore.get('token')?.value;
 
-    if (!sessionToken) {
+    if (!token) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
 
-    // Get user from session
-    global.sessions = global.sessions || {};
-    const user = global.sessions[sessionToken];
-
-    if (!user) {
+    let userId: string;
+    try {
+      const payload = verifyToken(token);
+      userId = payload.userId;
+    } catch (tokenError) {
       return NextResponse.json(
-        { error: 'Invalid session' },
+        { error: 'Invalid or expired session' },
         { status: 401 }
       );
     }
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
     // Create new analysis
     const newAnalysis: Analysis = {
       id: generateAnalysisId(),
-      user_id: user.id as string,
+      user_id: userId,
       business_name,
       menu_source,
       menu_url,
