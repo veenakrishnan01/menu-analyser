@@ -110,11 +110,12 @@ export function Navbar() {
               >
                 <span className="w-4 h-4">{item.icon}</span>
                 <span>{item.label}</span>
-                {item.isPremium && (
+                {/* Premium badge - hidden for now */}
+                {/* {item.isPremium && (
                   <span className="ml-1 px-1.5 py-0.5 text-[10px] font-semibold text-[#F38B08] bg-orange-50 rounded">
                     PRO
                   </span>
-                )}
+                )} */}
                 {pathname === item.href && (
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F38B08]"></span>
                 )}
@@ -201,11 +202,12 @@ export function Navbar() {
               >
                 <span className="w-4 h-4">{item.icon}</span>
                 <span>{item.label}</span>
-                {item.isPremium && (
+                {/* Premium badge - hidden for now */}
+                {/* {item.isPremium && (
                   <span className="ml-auto px-1.5 py-0.5 text-[10px] font-semibold text-[#F38B08] bg-orange-50 rounded">
                     PRO
                   </span>
-                )}
+                )} */}
               </Link>
             ))}
           </div>
