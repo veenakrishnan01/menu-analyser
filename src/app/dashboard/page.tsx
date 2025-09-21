@@ -67,6 +67,41 @@ export default function DashboardPage() {
                 </div>
               </div>
 
+              {/* Premium Features Card - Hidden for now */}
+              {/* <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg shadow-sm p-6 text-white">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Premium Features</h3>
+                  <span className="text-2xl">✨</span>
+                </div>
+                <p className="text-sm mb-4 opacity-90">
+                  Unlock AI-powered marketing tools to grow your business
+                </p>
+                <div className="space-y-3">
+                  <Link
+                    href="/offers"
+                    className="w-full bg-white/20 backdrop-blur text-white px-4 py-3 rounded-lg hover:bg-white/30 font-medium inline-flex items-center justify-center transition-colors border border-white/30"
+                  >
+                    <span className="mr-2">🎁</span>
+                    Generate Offers
+                  </Link>
+
+                  <Link
+                    href="/campaigns"
+                    className="w-full bg-white/20 backdrop-blur text-white px-4 py-3 rounded-lg hover:bg-white/30 font-medium inline-flex items-center justify-center transition-colors border border-white/30"
+                  >
+                    <span className="mr-2">📢</span>
+                    Build Campaigns
+                  </Link>
+
+                  <Link
+                    href="/premium"
+                    className="w-full bg-white text-purple-600 px-4 py-3 rounded-lg hover:bg-gray-50 font-medium inline-flex items-center justify-center transition-colors"
+                  >
+                    View All Premium Features →
+                  </Link>
+                </div>
+              </div> */}
+
               {/* Tips Card */}
               <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg border border-orange-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
