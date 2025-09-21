@@ -4,16 +4,9 @@ import { cookies } from 'next/headers';
 export async function POST() {
   try {
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get('session')?.value;
 
-    if (sessionToken) {
-      // Remove session from storage
-      global.sessions = global.sessions || {};
-      delete global.sessions[sessionToken];
-      
-      // Clear session cookie
-      cookieStore.delete('session');
-    }
+    // Clear JWT token cookie
+    cookieStore.delete('token');
 
     return NextResponse.json({
       success: true,

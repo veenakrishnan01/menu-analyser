@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcrypt';
 import { getUserByEmail } from '@/lib/supabase-auth';
+import { signToken } from '@/lib/jwt';
 
 interface StoredUser {
   id: string;
@@ -47,31 +48,28 @@ export async function POST(request: NextRequest) {
     // Create user session (remove password from response)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _password, ...userWithoutPassword } = user;
-    
-    // In production, you would:
-    // 1. Create a JWT token
-    // 2. Store session in database
-    // 3. Set secure httpOnly cookies
-    
-    // For now, we'll use a simple approach
-    const sessionToken = generateSessionToken();
-    
-    // Set session cookie
+
+    // Create JWT token
+    const token = signToken({
+      userId: userWithoutPassword.id,
+      email: userWithoutPassword.email,
+      name: userWithoutPassword.name
+    });
+
+    // Set JWT token in cookie
     const cookieStore = await cookies();
-    cookieStore.set('session', sessionToken, {
+    cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
-    // Store session mapping (in production, use Redis or database)
-    storeSession(sessionToken, userWithoutPassword);
-
     return NextResponse.json({
       success: true,
       message: 'Login successful',
-      user: userWithoutPassword
+      user: userWithoutPassword,
+      token // Include token in response for client-side storage if needed
     });
 
   } catch (error) {
@@ -81,17 +79,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-// Note: User storage now handled by Supabase
-
-function generateSessionToken(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
-}
-
-function storeSession(token: string, user: Omit<StoredUser, 'password'>) {
-  // In production, store in Redis or database
-  // For now, use in-memory storage (will reset on server restart)
-  global.sessions = global.sessions || {};
-  global.sessions[token] = user;
 }

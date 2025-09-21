@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { verifyToken } from '@/lib/jwt';
 import fs from 'fs';
 import path from 'path';
 import { cookies } from 'next/headers';
@@ -283,12 +284,27 @@ async function analyzeMenuWithGemini(menuText: string): Promise<AnalysisResult> 
 
 export async function POST(request: NextRequest) {
   try {
-    // For now, skip authentication check to fix production issue
-    // We'll implement proper JWT or database session management later
-    // This is a temporary fix to get the app working
+    // Check JWT authentication
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
 
-    // Get a dummy user ID for now (in production, this should come from proper auth)
-    const userId = 'temp-user-' + Date.now();
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    let userId: string;
+    try {
+      const payload = verifyToken(token);
+      userId = payload.userId;
+    } catch (tokenError) {
+      return NextResponse.json(
+        { error: 'Invalid or expired session' },
+        { status: 401 }
+      );
+    }
 
     const contentType = request.headers.get('content-type');
     let menuText = '';
