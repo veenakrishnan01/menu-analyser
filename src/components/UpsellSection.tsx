@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useToast } from '@/contexts/ToastContext';
 
 interface UserInfo {
   name: string;
@@ -90,6 +91,7 @@ const comboOffers = [
 export function UpsellSection({ userInfo }: UpsellSectionProps) {
   const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set());
   const [isProcessing, setIsProcessing] = useState(false);
+  const { showError } = useToast();
 
   const handleServiceToggle = (serviceId: string) => {
     const newSelected = new Set(selectedServices);
@@ -158,7 +160,7 @@ export function UpsellSection({ userInfo }: UpsellSectionProps) {
       }
     } catch (error) {
       console.error('Purchase error:', error);
-      alert('Failed to process purchase. Please try again.');
+      showError('Purchase failed', 'Failed to process purchase. Please try again.');
     } finally {
       setIsProcessing(false);
     }

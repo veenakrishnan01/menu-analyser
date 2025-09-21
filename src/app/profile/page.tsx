@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { Navbar } from '@/components/dashboard/Navbar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function ProfilePage() {
   const { user, updateProfile } = useAuth();
+  const { showSuccess, showError, showInfo } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,7 +32,13 @@ export default function ProfilePage() {
     e.preventDefault();
     if (!user) return;
 
+    if (!formData.name.trim()) {
+      showError('Name required', 'Please enter your full name');
+      return;
+    }
+
     setLoading(true);
+    showInfo('Updating profile', 'Saving your changes...');
 
     try {
       await updateProfile({
@@ -40,10 +48,10 @@ export default function ProfilePage() {
       });
 
       setIsEditing(false);
-      alert('Profile updated successfully!');
+      showSuccess('Profile updated!', 'Your profile information has been successfully updated.');
     } catch (error: unknown) {
       console.error('Error updating profile:', error);
-      alert('Failed to update profile. Please try again.');
+      showError('Update failed', 'Failed to update profile. Please try again.');
     } finally {
       setLoading(false);
     }

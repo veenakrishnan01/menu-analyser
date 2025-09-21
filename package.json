@@ -29,6 +29,7 @@
     "react-dom": "19.1.0",
     "react-email": "^4.2.8",
     "react-hook-form": "^7.62.0",
+    "react-hot-toast": "^2.6.0",
     "react-phone-input-2": "^2.15.1",
     "react-select": "^5.10.2"
   },

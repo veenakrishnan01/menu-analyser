@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { useToast } from '@/contexts/ToastContext';
 
 interface UserInfo {
   name: string;
@@ -29,12 +30,13 @@ export function MenuUploadDemo({ userInfo, onAnalysisComplete, onAnalyzing, anal
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+  const { showError } = useToast();
+
   const remainingAnalyses = Math.max(0, 10 - analysisUsed);
 
   const handleFileUpload = async (file: File) => {
     if (remainingAnalyses <= 0) {
-      alert('You have used all your free analyses for this session.');
+      showError('Analysis limit reached', 'You have used all your free analyses for this session.');
       return;
     }
 
@@ -61,7 +63,7 @@ export function MenuUploadDemo({ userInfo, onAnalysisComplete, onAnalyzing, anal
       onAnalysisComplete(result);
     } catch (error) {
       console.error('Analysis error:', error);
-      alert('Failed to analyze menu. Please try again.');
+      showError('Analysis failed', 'Failed to analyze menu. Please try again.');
       setIsAnalyzing(false);
     }
   };
@@ -90,7 +92,7 @@ export function MenuUploadDemo({ userInfo, onAnalysisComplete, onAnalyzing, anal
       onAnalysisComplete(result);
     } catch (error) {
       console.error('Analysis error:', error);
-      alert('Failed to analyze menu from URL. Please try again.');
+      showError('Analysis failed', 'Failed to analyze menu from URL. Please try again.');
       setIsAnalyzing(false);
     }
   };
@@ -103,7 +105,7 @@ export function MenuUploadDemo({ userInfo, onAnalysisComplete, onAnalyzing, anal
     if (fileType.includes('pdf') || fileType.includes('image') || fileType.includes('jpeg') || fileType.includes('png') || fileType.includes('jpg')) {
       handleFileUpload(file);
     } else {
-      alert('Please upload a PDF or image file (PNG, JPEG, JPG).');
+      showError('Invalid file type', 'Please upload a PDF or image file (PNG, JPEG, JPG).');
     }
   };
 
@@ -128,7 +130,7 @@ export function MenuUploadDemo({ userInfo, onAnalysisComplete, onAnalyzing, anal
       if (fileType.includes('pdf') || fileType.includes('image') || fileType.includes('jpeg') || fileType.includes('png') || fileType.includes('jpg')) {
         handleFileUpload(file);
       } else {
-        alert('Please upload a PDF or image file (PNG, JPEG, JPG).');
+        showError('Invalid file type', 'Please upload a PDF or image file (PNG, JPEG, JPG).');
       }
     }
   };

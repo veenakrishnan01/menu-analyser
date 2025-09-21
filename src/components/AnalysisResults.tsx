@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from '@/contexts/ToastContext';
 
 interface UserInfo {
   name: string;
@@ -33,9 +34,11 @@ export function AnalysisResults({
   const [activeTab, setActiveTab] = useState<"quick-wins" | "all">(
     "quick-wins"
   );
+  const { showSuccess, showError, showInfo } = useToast();
 
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
+    showInfo('Generating PDF', 'Creating your menu analysis report...');
     try {
       const response = await fetch("/api/generate-pdf", {
         method: "POST",
@@ -57,9 +60,10 @@ export function AnalysisResults({
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      showSuccess('PDF downloaded!', 'Your menu analysis report has been downloaded successfully.');
     } catch (error) {
       console.error("PDF download error:", error);
-      alert("Failed to generate PDF. Please try again.");
+      showError('PDF generation failed', 'Failed to generate PDF. Please try again.');
     } finally {
       setIsGeneratingPDF(false);
     }

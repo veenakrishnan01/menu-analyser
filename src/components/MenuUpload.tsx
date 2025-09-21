@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface UserInfo {
   name: string;
@@ -23,18 +24,20 @@ interface MenuUploadProps {
   userInfo: UserInfo;
   onAnalysisComplete: (result: AnalysisResult, analysisId?: string) => void;
   onAnalyzing: () => void;
+  onAnalysisError?: () => void;
   analysisUsed: number;
 }
 
-export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUploadProps) {
+export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing, onAnalysisError }: MenuUploadProps) {
   const [url, setUrl] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [remainingAnalyses, setRemainingAnalyses] = useState(10);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const { user } = useAuth();
   const supabase = createClient();
+  const { showSuccess, showError, showInfo } = useToast();
 
   useEffect(() => {
     const fetchRemainingAnalyses = async () => {
@@ -126,17 +129,23 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
 
   const handleFileUpload = async (file: File) => {
     if (remainingAnalyses <= 0) {
-      alert('You have used all your free analyses for today. Please try again tomorrow or upgrade your plan.');
+      showError('Daily limit reached', 'You have used all your free analyses for today. Please try again tomorrow or upgrade your plan.');
       return;
     }
 
     setIsAnalyzing(true);
     onAnalyzing();
+    showInfo('Analyzing menu', 'Please wait while we analyze your menu...');
 
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const fileType = file.type.includes('pdf') ? 'pdf' : 'image';
+
+      // Better file type detection
+      const fileName = file.name.toLowerCase();
+      const isPDF = file.type === 'application/pdf' || fileName.endsWith('.pdf');
+      const fileType = isPDF ? 'pdf' : 'image';
+
       formData.append('type', fileType);
       formData.append('userInfo', JSON.stringify(userInfo));
 
@@ -146,7 +155,8 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
       });
 
       if (!response.ok) {
-        throw new Error('Analysis failed');
+        const errorData = await response.json().catch(() => ({ error: 'Analysis failed' }));
+        throw new Error(errorData.error || `Analysis failed with status ${response.status}`);
       }
 
       const result = await response.json();
@@ -162,20 +172,32 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
       // Update analysis count
       await updateAnalysisCount();
       setRemainingAnalyses(prev => Math.max(0, prev - 1));
-      
+
+      showSuccess('Analysis complete!', 'Your menu has been successfully analyzed.');
       onAnalysisComplete(result, analysisId || undefined);
     } catch (error) {
       console.error('Analysis error:', error);
-      alert('Failed to analyze menu. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to analyze menu. Please try again.';
+      showError('Analysis failed', errorMessage);
       setIsAnalyzing(false);
+      onAnalysisError?.(); // Reset parent component state
     }
   };
 
   const handleUrlAnalysis = async () => {
-    if (!url.trim() || remainingAnalyses <= 0) return;
+    if (!url.trim()) {
+      showError('URL required', 'Please enter a valid menu URL.');
+      return;
+    }
+
+    if (remainingAnalyses <= 0) {
+      showError('Daily limit reached', 'You have used all your free analyses for today.');
+      return;
+    }
 
     setIsAnalyzing(true);
     onAnalyzing();
+    showInfo('Analyzing menu', 'Fetching and analyzing your online menu...');
 
     try {
       const response = await fetch('/api/analyze-menu', {
@@ -203,12 +225,15 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
       // Update analysis count
       await updateAnalysisCount();
       setRemainingAnalyses(prev => Math.max(0, prev - 1));
-      
+
+      showSuccess('Analysis complete!', 'Your online menu has been successfully analyzed.');
       onAnalysisComplete(result, analysisId || undefined);
+      setUrl('');
     } catch (error) {
       console.error('Analysis error:', error);
-      alert('Failed to analyze menu from URL. Please try again.');
+      showError('Analysis failed', 'Failed to analyze menu from URL. Please check the URL and try again.');
       setIsAnalyzing(false);
+      onAnalysisError?.(); // Reset parent component state
     }
   };
 
@@ -217,10 +242,21 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
     if (!file) return;
 
     const fileType = file.type;
-    if (fileType.includes('pdf') || fileType.includes('image') || fileType.includes('jpeg') || fileType.includes('png') || fileType.includes('jpg')) {
+    const fileName = file.name.toLowerCase();
+
+    // Check both MIME type and file extension for better compatibility
+    const isPDF = fileType === 'application/pdf' || fileName.endsWith('.pdf');
+    const isImage = fileType.startsWith('image/') ||
+                   fileName.endsWith('.png') ||
+                   fileName.endsWith('.jpg') ||
+                   fileName.endsWith('.jpeg') ||
+                   fileName.endsWith('.gif') ||
+                   fileName.endsWith('.webp');
+
+    if (isPDF || isImage) {
       handleFileUpload(file);
     } else {
-      alert('Please upload a PDF or image file (PNG, JPEG, JPG).');
+      showError('Invalid file type', 'Please upload a PDF or image file (PNG, JPEG, JPG, GIF, WebP).');
     }
   };
 
@@ -242,10 +278,21 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       const fileType = file.type;
-      if (fileType.includes('pdf') || fileType.includes('image') || fileType.includes('jpeg') || fileType.includes('png') || fileType.includes('jpg')) {
+      const fileName = file.name.toLowerCase();
+
+      // Check both MIME type and file extension for better compatibility
+      const isPDF = fileType === 'application/pdf' || fileName.endsWith('.pdf');
+      const isImage = fileType.startsWith('image/') ||
+                     fileName.endsWith('.png') ||
+                     fileName.endsWith('.jpg') ||
+                     fileName.endsWith('.jpeg') ||
+                     fileName.endsWith('.gif') ||
+                     fileName.endsWith('.webp');
+
+      if (isPDF || isImage) {
         handleFileUpload(file);
       } else {
-        alert('Please upload a PDF or image file (PNG, JPEG, JPG).');
+        showError('Invalid file type', 'Please upload a PDF or image file (PNG, JPEG, JPG, GIF, WebP).');
       }
     }
   };
@@ -283,7 +330,7 @@ export function MenuUpload({ userInfo, onAnalysisComplete, onAnalyzing }: MenuUp
           <input
             ref={fileInputRef}
             type="file"
-            accept=".pdf,image/*"
+            accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,image/*,application/pdf"
             onChange={handleFileChange}
             className="hidden"
           />

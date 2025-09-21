@@ -42,10 +42,11 @@ textarea::placeholder {
 
 /* Dark mode support for inputs */
 @media (prefers-color-scheme: dark) {
-  input, 
-  textarea, 
+  input,
+  textarea,
   select {
     color: #111827;
     background-color: #ffffff;
   }
 }
+

@@ -13,7 +13,11 @@
       "Bash(npx next build:*)",
       "Bash(npm run lint)",
       "Bash(git commit:*)",
-      "Bash(git rev-parse:*)"
+      "Bash(git rev-parse:*)",
+      "Bash(npx supabase:*)",
+      "Bash(node:*)",
+      "Bash(del test-pdf.js)",
+      "Bash(npx vercel:*)"
     ],
     "deny": []
   }

@@ -94,5 +94,357 @@
       ]
     },
     "created_at": "2025-08-25T13:58:45.430Z"
+  },
+  {
+    "id": "1757423030188-sob3xl69o4",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "The menu has potential for significant revenue growth through strategic pricing, improved visual appeal, and the introduction of combo meals and upselling opportunities.  Currently, the organization of items hinders efficient navigation and identification of high-margin options.  Implementing these changes will increase average order value and overall revenue.",
+      "quick_wins": [
+        "Implement combo meals featuring popular items from different categories (e.g., Mutton Chops + Veechu Parotta + Soda Lime combo)",
+        "Introduce a 'Chef's Special' section highlighting high-margin items with appealing descriptions.",
+        "Add high-profit margin desserts to the menu, strategically positioned near the end."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of food items to enhance visual appeal and drive sales.",
+        "Group menu items by category with clear headings and subheadings.",
+        "Improve font readability and use whitespace effectively to create a less cluttered and more visually appealing menu."
+      ],
+      "strategic_pricing": [
+        "Implement price anchoring by strategically placing high-priced items next to moderately priced options to make the latter seem more affordable.",
+        "Offer different sizes or portions of popular dishes at varied price points to cater to different budgets and appetites.",
+        "Analyze sales data to identify underperforming items and consider adjusting prices or removing them from the menu."
+      ],
+      "menu_design": [
+        "Organize the menu into logical sections (Appetizers, Main Courses, Desserts, Beverages) with clear dividers.",
+        "Use descriptive and appealing language to describe each dish, highlighting unique ingredients or preparation methods.",
+        "Include a section for daily specials to add variety and encourage repeat visits."
+      ]
+    },
+    "created_at": "2025-09-09T13:03:50.188Z"
+  },
+  {
+    "id": "1758297159788-bdeip4kgwet",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "The menu has potential for significant revenue growth.  Strategic pricing adjustments, improved menu organization, and targeted upselling/cross-selling opportunities can boost average order value and overall revenue.  Visual improvements will enhance customer experience and drive impulse purchases.",
+      "quick_wins": [
+        "Introduce combo meals bundling popular appetizers with main courses at a discounted price.",
+        "Highlight vegan options more prominently, catering to the growing vegan market.",
+        "Add a 'Chef's Special' section featuring high-profit, uniquely described dishes."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of dishes to increase appeal.",
+        "Employ color-coding to categorize dishes (e.g., spice level, dietary restrictions).",
+        "Improve font readability and use whitespace effectively for better menu navigation."
+      ],
+      "strategic_pricing": [
+        "Implement price anchoring by including a few high-priced items to make other dishes seem more reasonable.",
+        "Offer different sizes of popular dishes at varying price points (e.g., small, medium, large).",
+        "Use descriptive pricing, like 'market price' for seasonal items to convey freshness and value."
+      ],
+      "menu_design": [
+        "Categorize items more logically (Appetizers, Main Courses, Sides, etc.).",
+        "Use clear headings and subheadings to guide customer selection.",
+        "Add a section dedicated to describing the restaurant’s special sauces and preparation techniques."
+      ]
+    },
+    "created_at": "2025-09-19T15:52:39.788Z"
+  },
+  {
+    "id": "1758309301832-mpjlxjm118d",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "Veena's Kitchen menu has significant untapped revenue potential.  Strategic pricing adjustments, improved visual presentation, and the introduction of combo meals and upselling opportunities can substantially increase average order value and overall revenue.  Focusing on clear categorization and descriptive language will enhance customer experience and drive sales.",
+      "quick_wins": [
+        "Introduce combo meals bundling popular appetizers (e.g., Samosas + Chicken Tikka Masala) at a discounted price (e.g., 15% off).",
+        "Create a dedicated section prominently showcasing vegan options with enticing descriptions and high-quality images.",
+        "Add a 'Chef's Special' section featuring 2-3 high-profit, uniquely described dishes with premium ingredients and creative names (e.g., \"Spicy Coconut Curry with King Prawns\")."
+      ],
+      "visual_appeal": [
+        "Use high-quality, professionally-shot photos of each dish, highlighting appealing textures and colors.",
+        "Employ a color-coded system to indicate spice level (e.g., mild: green, medium: yellow, spicy: red) and dietary restrictions (vegetarian: green, vegan: purple).",
+        "Use a clear, easy-to-read font with sufficient white space to avoid a cluttered look.  Group items logically with clear headings and subheadings."
+      ],
+      "strategic_pricing": [
+        "Introduce a few high-priced, premium dishes (e.g., Lobster Biryani) to act as price anchors, making other items seem more reasonably priced.",
+        "Offer different portion sizes for popular main courses (small, medium, large) at different price points to cater to diverse needs and budgets.",
+        "Use descriptive pricing for seasonal items, such as 'Market Price' for dishes featuring fresh, in-season ingredients, emphasizing freshness and value."
+      ],
+      "menu_design": [
+        "Categorize items logically (Appetizers, Salads, Main Courses, Sides, Desserts, Beverages).",
+        "Use clear headings and subheadings (e.g., 'Our Popular Curries', 'Vegetarian Delights', 'Tandoor Specialties').",
+        "Dedicate a section to describe Veena's Kitchen's unique sauces and preparation techniques, highlighting special ingredients or traditional methods."
+      ]
+    },
+    "created_at": "2025-09-19T19:15:01.833Z"
+  },
+  {
+    "id": "1758309319363-3740mt9odng",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "Veena's Kitchen menu has significant untapped revenue potential.  Strategic pricing adjustments, improved visual presentation, and the introduction of combo meals and high-profit items can substantially increase average order value and overall revenue.  Focusing on clear categorization and descriptive language will enhance customer experience and drive sales.",
+      "quick_wins": [
+        "Introduce combo meals: Offer 'Appetizer + Main Course' bundles at a 10-15% discount, featuring popular appetizer and entree pairings.",
+        "Promote vegan options: Create a dedicated 'Vegan Delights' section with high-quality images and enticing descriptions, emphasizing freshness and unique flavors.",
+        "Feature a 'Chef's Special': Highlight 2-3 high-profit items daily with unique names and detailed, appealing descriptions, emphasizing premium ingredients and preparation."
+      ],
+      "visual_appeal": [
+        "High-quality food photography: Use professional, appetizing images of each dish to stimulate customer desire.",
+        "Color-coded categories: Use color-coding to easily identify vegetarian, vegan, spicy, or other dietary restrictions.",
+        "Improved readability: Use a clear, easy-to-read font, ample white space, and logical grouping of menu items to enhance navigation."
+      ],
+      "strategic_pricing": [
+        "Price anchoring: Introduce 2-3 premium-priced dishes to make other items seem more reasonably priced.",
+        "Portion sizing: Offer popular dishes in small, medium, and large sizes with appropriately tiered pricing.",
+        "Descriptive pricing: Use 'Market Price' for seasonal items to highlight freshness and justify price fluctuations based on ingredient availability."
+      ],
+      "menu_design": [
+        "Logical categorization: Organize the menu into clear sections: Appetizers, Salads, Soups, Main Courses (categorized by cuisine type if applicable), Sides, Desserts, Beverages.",
+        "Descriptive headings and subheadings: Use clear, concise headings and subheadings to guide customer choices and highlight key features (e.g., 'Spicy Favorites,' 'Vegetarian Options').",
+        "Sauce and preparation descriptions: Add a section detailing signature sauces, cooking methods, and unique preparation techniques to enhance perceived value and create a sense of culinary expertise."
+      ]
+    },
+    "created_at": "2025-09-19T19:15:19.363Z"
+  },
+  {
+    "id": "1758309335131-2gxq094klnj",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "The menu has potential for significant revenue growth.  Strategic pricing adjustments, improved menu descriptions, and targeted upselling/cross-selling opportunities can substantially increase average order value and overall revenue.  Visual improvements will enhance customer engagement and drive impulse purchases.",
+      "quick_wins": [
+        "Introduce combo meals bundling popular appetizers, main courses, and sides at a discounted price.",
+        "Highlight best-selling items with enticing descriptions and high-quality photos.",
+        "Implement a loyalty program to incentivize repeat visits and higher spending."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of dishes to enhance visual appeal and create a more appetizing menu.",
+        "Improve font readability and use clear section headers to enhance menu navigation.",
+        "Introduce color-coding to visually separate sections and highlight key items."
+      ],
+      "strategic_pricing": [
+        "Implement price anchoring by strategically placing high-priced items alongside more moderately priced options to make the latter seem more affordable.",
+        "Consider value-based pricing, offering larger portion sizes at a slightly higher price to appeal to value-conscious customers.",
+        "Offer prix fixe menus for lunch or dinner to encourage higher spending and streamline ordering."
+      ],
+      "menu_design": [
+        "Group items logically by category (e.g., appetizers, main courses, sides) with clear section headings.",
+        "Use descriptive language that evokes senses and highlights unique selling points of each dish.",
+        "Employ a clear and concise layout that is easy to read and navigate, potentially using a two-column format for better readability."
+      ]
+    },
+    "created_at": "2025-09-19T19:15:35.131Z"
+  },
+  {
+    "id": "1758309373796-871oixusy5d",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "Veena's Kitchen menu has significant untapped revenue potential.  Strategic pricing adjustments, improved visual presentation, and the introduction of combo meals and upselling opportunities can substantially increase average order value and overall revenue.  A focus on clear categorization and descriptive language will enhance customer experience and drive sales.",
+      "quick_wins": [
+        "Introduce combo meals: Offer 'Lunch Special' and 'Dinner Special' bundles combining a popular appetizer, main course, and side at a discounted price.",
+        "Highlight vegan options: Create a dedicated 'Vegan Delights' section with appealing descriptions and high-quality images.",
+        "Implement a 'Chef's Recommendation' section: Feature 2-3 high-profit, uniquely described dishes with enticing descriptions that highlight premium ingredients or preparation techniques."
+      ],
+      "visual_appeal": [
+        "Use high-quality, professionally styled food photography for all dishes.",
+        "Implement color-coding: Use a color system to indicate spice level (mild, medium, hot) and dietary restrictions (vegetarian, vegan, gluten-free).",
+        "Improve typography: Use a clear, easy-to-read font with sufficient whitespace to improve readability and create a visually appealing layout."
+      ],
+      "strategic_pricing": [
+        "Price anchoring: Introduce a few premium-priced dishes (e.g., a lobster dish or a specialty steak) to make other items seem more reasonably priced.",
+        "Offer portion sizes: Provide small, medium, and large options for popular dishes with clearly defined price differences.",
+        "Descriptive pricing: For seasonal items or specials, use 'Market Price' or 'Today's Special' to emphasize freshness and value."
+      ],
+      "menu_design": [
+        "Logical categorization: Clearly separate appetizers, main courses, sides, desserts, and beverages with appropriate headings and subheadings.",
+        "Descriptive headings and subheadings: Use clear, concise, and descriptive headings that guide customers through the menu categories.",
+        "Sauce and preparation highlight: Create a section describing the restaurant’s unique sauces, preparation techniques (e.g., 'homemade masala,' 'slow-cooked'), or signature ingredients to add value and entice customers."
+      ]
+    },
+    "created_at": "2025-09-19T19:16:13.796Z"
+  },
+  {
+    "id": "1758309554961-tdxjfd2up5q",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 20,
+    "analysis_results": {
+      "revenue_score": 20,
+      "summary": "The current menu lacks clear structure, appealing descriptions, and strategic pricing, significantly hindering revenue potential.  Implementing visual improvements, descriptive copywriting, and strategic pricing adjustments can dramatically increase average order value and overall revenue.  Upselling and cross-selling opportunities are completely absent.",
+      "quick_wins": [
+        "Add enticing descriptions to each menu item, highlighting unique ingredients and preparation methods.",
+        "Implement a visually appealing menu layout with clear categorization and high-quality images.",
+        "Introduce a tiered pricing strategy with options at different price points to cater to a broader customer base."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of each dish to enhance visual appeal and stimulate customer interest.",
+        "Employ a clear and consistent font and layout to improve readability and create a professional look.",
+        "Incorporate whitespace effectively to avoid a cluttered appearance and guide the customer's eye."
+      ],
+      "strategic_pricing": [
+        "Introduce price points that end in .99 to create a perception of value.",
+        "Implement a premium pricing strategy for signature dishes to position them as high-value options.",
+        "Offer combo meals or value sets at attractive prices to encourage higher spending."
+      ],
+      "menu_design": [
+        "Categorize menu items logically (e.g., appetizers, entrees, desserts) to improve navigation.",
+        "Use descriptive headings and subheadings to create a clear hierarchy and guide the customer's eye.",
+        "Highlight popular or best-selling items strategically to encourage their selection."
+      ]
+    },
+    "created_at": "2025-09-19T19:19:14.961Z"
+  },
+  {
+    "id": "1758309950498-zdh7sn6kp2b",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 75,
+    "analysis_results": {
+      "revenue_score": 75,
+      "summary": "The menu demonstrates a good variety of dishes with clear pricing, but lacks visual appeal and strategic pricing opportunities to maximize revenue.  Improving menu descriptions and implementing upselling techniques can significantly boost revenue.  Careful consideration of pricing tiers and visual organization will enhance customer experience and profitability.",
+      "quick_wins": [
+        "Implement a visually appealing menu design with high-quality images and clear categorization.",
+        "Introduce combo meals or group deals to encourage higher spending per customer.",
+        "Improve dish descriptions to highlight unique selling points and ingredients, emphasizing premium aspects."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of the dishes to enhance visual appeal.",
+        "Improve readability by using clear fonts and appropriate spacing.",
+        "Organize the menu into logical sections with clear headings and subheadings."
+      ],
+      "strategic_pricing": [
+        "Analyze competitor pricing and adjust your prices accordingly to optimize profitability.",
+        "Consider implementing price anchoring by offering high-priced items alongside more affordable options.",
+        "Offer different price points within each category to cater to a wider range of budgets."
+      ],
+      "menu_design": [
+        "Group similar items together (e.g., all appetizers, all lamb dishes).",
+        "Use visual cues, like bolding or different font sizes, to highlight popular or premium items.",
+        "Consider a more user-friendly layout, potentially with a two-column design for better readability."
+      ]
+    },
+    "created_at": "2025-09-19T19:25:50.498Z"
+  },
+  {
+    "id": "1758310739471-wx2gdduom88",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "The menu shows a good variety of items, but lacks visual appeal and strategic pricing.  There's potential for increased revenue through better organization, descriptive wording, and price point adjustments.  Upselling opportunities are largely untapped.",
+      "quick_wins": [
+        "Implement visually appealing categories and section headers.",
+        "Improve item descriptions to highlight unique selling points and quality ingredients.",
+        "Analyze competitor pricing to optimize price points for maximum profitability."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of signature dishes.",
+        "Employ whitespace effectively to improve readability.",
+        "Categorize items logically (e.g., appetizers, main courses, desserts) with clear headings."
+      ],
+      "strategic_pricing": [
+        "Consider implementing price anchoring by strategically placing higher-priced items next to lower-priced ones.",
+        "Experiment with premium pricing for high-demand items to increase perceived value.",
+        "Analyze the profitability of each item and adjust prices accordingly."
+      ],
+      "menu_design": [
+        "Organize the menu into clear sections with intuitive navigation.",
+        "Use a visually appealing font and layout.",
+        "Consider using different font sizes and styles to create visual hierarchy and emphasize key menu items."
+      ]
+    },
+    "created_at": "2025-09-19T19:38:59.471Z"
+  },
+  {
+    "id": "1758311224112-rgu55lah73",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 30,
+    "analysis_results": {
+      "revenue_score": 30,
+      "summary": "The menu shows potential but suffers from poor descriptions and inconsistent pricing.  Implementing clearer descriptions, strategically raising prices on high-demand items, and adding visually appealing sections can significantly improve revenue.  The use of lorem ipsum text is a major drawback.",
+      "quick_wins": [
+        "Replace placeholder text ('Lorem ipsum...') with enticing and descriptive food descriptions highlighting key ingredients and preparation methods.",
+        "Analyze sales data to identify best-selling items and slightly increase their prices. Consider offering combo deals to boost average order value.",
+        "Introduce visually appealing photos or illustrations of your signature dishes to increase customer engagement and perceived value."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of food items.  Make sure images are well-lit and visually appealing.",
+        "Improve font readability; choose a font that is both easy to read and consistent with the restaurant's brand.",
+        "Organize the menu into clear sections with headings to enhance navigation and visual appeal."
+      ],
+      "strategic_pricing": [
+        "Implement price anchoring by strategically placing high-priced items to make lower-priced items seem more attractive.",
+        "Consider using psychological pricing techniques (e.g., $4.99 instead of $5.00).",
+        "Analyze competitor pricing to understand market positioning and adjust prices accordingly."
+      ],
+      "menu_design": [
+        "Organize the menu into logical categories (e.g., appetizers, main courses, desserts).",
+        "Use white space effectively to improve readability and create a visually appealing layout.",
+        "Consider adding a section for daily specials or seasonal dishes to keep the menu fresh and interesting."
+      ]
+    },
+    "created_at": "2025-09-19T19:47:04.112Z"
+  },
+  {
+    "id": "1758456584018-f6y70526zqr",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 75,
+    "analysis_results": {
+      "revenue_score": 75,
+      "summary": "The menu demonstrates a good variety of Indian dishes with competitive pricing.  Revenue could be significantly boosted by implementing strategic pricing adjustments, improving visual appeal, and highlighting upselling opportunities.  More descriptive and enticing item descriptions would also increase customer appeal.",
+      "quick_wins": [
+        "Implement tiered pricing to highlight premium items (e.g.,  'Chef's Special' section with slightly higher prices but superior presentation).",
+        "Introduce combo meals that bundle popular dishes with sides and drinks at a discounted price.",
+        "Add high-margin dessert options to increase average order value."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of signature dishes to enhance visual appeal and stimulate customer desire.",
+        "Employ a clear and consistent font and layout for better readability.",
+        "Implement a color scheme that is consistent with the restaurant's brand and evokes a sense of warmth and authenticity."
+      ],
+      "strategic_pricing": [
+        "Analyze sales data to identify underperforming items and adjust their prices accordingly or consider removing them.",
+        "Consider implementing price anchoring by placing a higher-priced item next to a similarly sized item that seems more reasonably priced.",
+        "Offer daily or weekly specials to drive traffic and create a sense of urgency."
+      ],
+      "menu_design": [
+        "Organize the menu into clear sections with descriptive headings and subheadings.",
+        "Use whitespace effectively to improve readability and create a less cluttered look.",
+        "Consider adding a section for customer testimonials or awards to build trust and credibility."
+      ]
+    },
+    "created_at": "2025-09-21T12:09:44.018Z"
   }
 ]

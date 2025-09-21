@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
 import PhoneInput from 'react-phone-input-2';
@@ -33,8 +34,9 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const { signIn, signUp } = useAuth();
+  const { showSuccess, showError, showInfo } = useToast();
   const router = useRouter();
 
   const {
@@ -71,6 +73,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
 
     try {
       if (mode === 'signup') {
+        showInfo('Creating account', 'Setting up your new account...');
         const signupData = data as SignUpFormData;
         const formattedPhone = signupData.phoneNumber ? `+${signupData.phoneNumber}` : '';
         await signUp(
@@ -80,15 +83,20 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
           signupData.businessName || '',
           formattedPhone
         );
+        showSuccess('Account created!', 'Welcome to MenuAnalyzer! You can now start analyzing your menus.');
       } else {
+        showInfo('Signing in', 'Verifying your credentials...');
         const signinData = data as SignInFormData;
         await signIn(signinData.email, signinData.password);
+        showSuccess('Welcome back!', 'Successfully signed in to your account.');
       }
-      
+
       router.push('/dashboard');
       router.refresh();
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An error occurred');
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+      setError(errorMessage);
+      showError(mode === 'signup' ? 'Account creation failed' : 'Sign in failed', errorMessage);
     } finally {
       setLoading(false);
     }

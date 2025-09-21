@@ -26,6 +26,10 @@ export default function MenuAnalyzer() {
     setStep('results');
   };
 
+  const handleAnalysisError = () => {
+    setStep('upload');
+  };
+
   const handleNewAnalysis = () => {
     setStep('upload');
     setAnalysisResult(null);
@@ -35,7 +39,7 @@ export default function MenuAnalyzer() {
   return (
     <div className="max-w-4xl mx-auto">
       {step === 'upload' && user && (
-        <MenuUpload 
+        <MenuUpload
           userInfo={{
             name: user.name || user.email || '',
             email: user.email || '',
@@ -43,6 +47,7 @@ export default function MenuAnalyzer() {
           }}
           onAnalysisComplete={handleAnalysisComplete}
           onAnalyzing={() => setStep('analyzing')}
+          onAnalysisError={handleAnalysisError}
           analysisUsed={0} // Will be calculated from database
         />
       )}
