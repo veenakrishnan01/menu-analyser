@@ -446,5 +446,37 @@
       ]
     },
     "created_at": "2025-09-21T12:09:44.018Z"
+  },
+  {
+    "id": "1758457067129-qd8lgqvs0z",
+    "user_id": "70319b45-8fe1-40c1-bdf8-f0ce6d4fc55c",
+    "business_name": null,
+    "menu_source": "file",
+    "revenue_score": 65,
+    "analysis_results": {
+      "revenue_score": 65,
+      "summary": "The menu demonstrates a good variety of Indian dishes with competitive pricing.  Revenue could be increased by highlighting premium items, implementing better upselling strategies, and improving visual presentation.  Strategic pricing adjustments could also optimize profitability.",
+      "quick_wins": [
+        "Introduce combo meals or Thali options to increase average order value.",
+        "Implement suggestive selling techniques by training staff to recommend appetizers or side dishes.",
+        "Offer a loyalty program or discounts for repeat customers to encourage return visits."
+      ],
+      "visual_appeal": [
+        "Use high-quality images of the dishes to enhance visual appeal and increase customer engagement.",
+        "Improve readability by using clear fonts, appropriate spacing, and section headings.",
+        "Organize the menu logically by category, using clear visual dividers between sections."
+      ],
+      "strategic_pricing": [
+        "Analyze the profitability of each item and adjust prices accordingly. Consider price anchoring techniques by placing higher-priced items near lower-priced ones.",
+        "Implement tiered pricing for different sizes or quantities of dishes, allowing customers to choose according to their budget and appetite.",
+        "Introduce a daily or weekly special to drive sales and create a sense of urgency."
+      ],
+      "menu_design": [
+        "Group similar items together (e.g., all lamb dishes, all vegetarian dishes) for easier navigation.",
+        "Use descriptive language to highlight the unique selling points of each dish (e.g., 'Chef's special,' 'Authentic recipe').",
+        "Consider adding a section for beverages to increase sales opportunities."
+      ]
+    },
+    "created_at": "2025-09-21T12:17:47.129Z"
   }
 ]
