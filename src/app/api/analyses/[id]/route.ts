@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/jwt';
 import fs from 'fs';
 import path from 'path';
 
@@ -25,22 +26,22 @@ interface Analysis {
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get('session')?.value;
+    const token = cookieStore.get('token')?.value;
 
-    if (!sessionToken) {
+    if (!token) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
 
-    // Get user from session
-    global.sessions = global.sessions || {};
-    const user = global.sessions[sessionToken];
-
-    if (!user) {
+    let userId: string;
+    try {
+      const payload = verifyToken(token);
+      userId = payload.userId;
+    } catch (tokenError) {
       return NextResponse.json(
-        { error: 'Invalid session' },
+        { error: 'Invalid or expired session' },
         { status: 401 }
       );
     }
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Check if the analysis belongs to the current user
-    if (analysis.user_id !== user.id) {
+    if (analysis.user_id !== userId) {
       return NextResponse.json(
         { error: 'Access denied. You can only view your own analyses.' },
         { status: 403 }
@@ -82,22 +83,22 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get('session')?.value;
+    const token = cookieStore.get('token')?.value;
 
-    if (!sessionToken) {
+    if (!token) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
 
-    // Get user from session
-    global.sessions = global.sessions || {};
-    const user = global.sessions[sessionToken];
-
-    if (!user) {
+    let userId: string;
+    try {
+      const payload = verifyToken(token);
+      userId = payload.userId;
+    } catch (tokenError) {
       return NextResponse.json(
-        { error: 'Invalid session' },
+        { error: 'Invalid or expired session' },
         { status: 401 }
       );
     }
@@ -114,7 +115,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     // Check if the analysis belongs to the current user
-    if (analysis.user_id !== user.id) {
+    if (analysis.user_id !== userId) {
       return NextResponse.json(
         { error: 'Access denied. You can only delete your own analyses.' },
         { status: 403 }
